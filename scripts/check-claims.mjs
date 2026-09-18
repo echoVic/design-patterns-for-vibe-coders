@@ -35,7 +35,7 @@ for (const d of ['branch-refactor', 'editor-refactor']) {
 
 const versions = {}
 for (const v of ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v1.1']) {
-  versions[v] = await countTs(join(root, 'case', v), ['attempt-', 'verify.'])
+  versions[v] = await countTs(join(root, 'case', v), ['attempt-', 'verify.', 'store.test'])
 }
 
 // 书里出现的、需要核对的数字
