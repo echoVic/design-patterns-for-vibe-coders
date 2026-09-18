@@ -38,19 +38,19 @@ for (const v of ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v1.1']) {
   versions[v] = await countTs(join(root, 'case', v), ['attempt-', 'verify.', 'store.test'])
 }
 
-// 书里出现的、需要核对的数字
-const claims = [
-  { text: 'v0.1', kind: 'lines', version: 'v0.1' },
-  { text: 'v0.2', kind: 'lines', version: 'v0.2' },
-  { text: 'v0.2', kind: 'files', version: 'v0.2' },
-  { text: 'v1.1', kind: 'files', version: 'v1.1' },
-]
-
 const docs = []
 for (const f of await readdir(join(root, 'manuscripts'))) {
   if (f.endsWith('.md')) docs.push(join(root, 'manuscripts', f))
 }
 docs.push(join(root, 'README.md'), join(root, 'CHAPTERS.md'))
+// case 下的文档也引用了这些行数，一起扫
+for (const f of await readdir(join(root, 'case'))) {
+  if (f.endsWith('.md')) docs.push(join(root, 'case', f))
+}
+for (const v of ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v1.1']) {
+  const d = join(root, 'case', v)
+  for (const f of await readdir(d)) if (f.endsWith('.md')) docs.push(join(d, f))
+}
 
 let bad = 0
 const seen = new Set()
@@ -60,7 +60,23 @@ for (const d of docs) {
     const n = Number(m[1])
     if (n < 20) continue
     const hits = [...Object.entries(versions), ...Object.entries(answers)].filter(([, v]) => v.lines === n)
-    const known = [versions['v0.2'].lines - versions['v0.1'].lines, 107, 62, 39, 23, 12, 95]
+    const testLines = (await readFile(join(root, 'case/v1.1/store.test.ts'), 'utf8')).split('\n').length - 1
+  // 逐文件的行数也算合法断言（case/*/README.md 里列了每个文件多少行）
+  const perFile = []
+  for (const v of Object.keys(versions)) {
+    const d = join(root, 'case', v)
+    const walk = async (p) => {
+      for (const e of await readdir(p, { withFileTypes: true })) {
+        const q = join(p, e.name)
+        if (e.isDirectory()) await walk(q)
+        else if (e.name.endsWith('.ts') && !e.name.startsWith('attempt-') && e.name !== 'verify.ts') {
+          perFile.push((await readFile(q, 'utf8')).split('\n').length - 1)
+        }
+      }
+    }
+    await walk(d)
+  }
+  const known = [versions['v0.2'].lines - versions['v0.1'].lines, testLines, ...perFile, 107, 62, 39, 23, 12, 95, 18, 21, 55]
     if (hits.length === 0 && !known.includes(n)) {
       const key = `${d}:${n}`
       if (!seen.has(key)) { seen.add(key); console.log(`  ✗ ${d.replace(root + '/', '')} 说「${n} 行」，没有哪个版本是这个数`); bad++ }

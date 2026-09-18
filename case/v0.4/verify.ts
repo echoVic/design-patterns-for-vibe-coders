@@ -53,8 +53,29 @@ for (const opts of optionSets) {
   }
 }
 
+// 光是「两版一致」不够——两版可能错得一模一样。
+// 所以再断言一组期望输出。
+const expected: [string, string][] = [
+  ['**粗**', '<b>粗</b>'],
+  ['`码`', '<code>码</code>'],
+  ['~~删~~', '<s>删</s>'],
+  ['[链](http://a.b)', '<a href="http://a.b">链</a>'],
+  ['> 引用', '<blockquote>引用</blockquote>'],
+  ['- 项', '<li>项</li>'],
+  ['<script>', '&lt;script&gt;'],
+]
+for (const [input, want] of expected) {
+  const got = branchRender(input, ALL_ON)
+  if (got !== want) {
+    failed++
+    console.log(`✗ 期望输出不符：${JSON.stringify(input)}`)
+    console.log(`   期望: ${want}`)
+    console.log(`   实际: ${got}`)
+  }
+}
+
 if (failed === 0) {
-  console.log(`✓ ${samples.length} 个样例 × ${optionSets.length + 1} 组开关，输出全部一致`)
+  console.log(`✓ ${samples.length} 个样例 × ${optionSets.length + 1} 组开关，输出全部一致；${expected.length} 组期望输出也相符`)
 } else {
   // 抛异常而不是 process.exit，这样不需要 @types/node
   throw new Error(`✗ 共 ${failed} 处不一致`)

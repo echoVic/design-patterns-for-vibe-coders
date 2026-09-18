@@ -21,7 +21,8 @@ export const rules = [
   { name: 'bold',       apply: (h: string) => h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') },
   { name: 'strike',     apply: (h: string) => h.replace(/~~(.+?)~~/g, '<s>$1</s>') },
   { name: 'link',       apply: (h: string) => h.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') },
-  { name: 'quote',      apply: (h: string) => h.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>') },
+    // 注意匹配的是转义后的 &gt;：render 先转义再套规则
+  { name: 'quote',      apply: (h: string) => h.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>') },
   { name: 'list',       apply: (h: string) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
 ] as const satisfies readonly Rule[]
 

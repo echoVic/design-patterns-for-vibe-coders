@@ -21,7 +21,7 @@ export function render(text: string, options: RenderOptions): string {
   if (options.bold) html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
   if (options.strike) html = html.replace(/~~(.+?)~~/g, '<s>$1</s>')
   if (options.link) html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-  if (options.quote) html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+  if (options.quote) html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
   if (options.list) html = html.replace(/^- (.+)$/gm, '<li>$1</li>')
 
   return html
