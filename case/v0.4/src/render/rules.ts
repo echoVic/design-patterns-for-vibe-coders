@@ -3,7 +3,14 @@
  *
  * 顺序、集合、开关，三件事都在数组里看得见。
  */
-import type { RenderOptions } from './branches'
+export interface RenderOptions {
+  inlineCode?: boolean
+  bold?: boolean
+  strike?: boolean
+  link?: boolean
+  quote?: boolean
+  list?: boolean
+}
 
 export interface Rule {
   /** 名字，也是开关的键。 */
@@ -11,7 +18,7 @@ export interface Rule {
   readonly apply: (html: string) => string
 }
 
-const escape = (s: string): string =>
+export const escapeHtml = (s: string): string =>
   s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!)
 
 /** 顺序就是数组顺序——行内元素在前，块级在后。 */
@@ -27,5 +34,5 @@ export const rules: readonly Rule[] = [
 export function renderWith(text: string, options: RenderOptions): string {
   return rules
     .filter((rule) => options[rule.name])
-    .reduce((html, rule) => rule.apply(html), escape(text))
+    .reduce((html, rule) => rule.apply(html), escapeHtml(text))
 }
