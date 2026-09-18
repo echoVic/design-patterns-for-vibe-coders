@@ -25,7 +25,8 @@ export function createApp({ store, options = DEFAULT_OPTIONS }: AppDeps) {
     list.innerHTML = notes
       .map((n) => {
         const time = new Date(n.createdAt).toTimeString().slice(0, 5)
-        const tags = n.tags.map((t) => `<span class="tag">${t}</span>`).join('')
+        // 早前版本写入的笔记没有 tags 字段，读的时候要兜住
+        const tags = (n.tags ?? []).map((t) => `<span class="tag">${t}</span>`).join('')
         return `<div class="note"><time>${time}</time>${render(n.text, options)}${tags}</div>`
       })
       .join('')
