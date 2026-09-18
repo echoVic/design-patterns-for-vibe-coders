@@ -930,7 +930,7 @@ export function createExporter(service: NoteService) { /* ... */ }
 <h1>加一个功能，要动几个文件</h1>
 <h2>我想加搜索</h2>
 <p>我想给速记加搜索。</p>
-<p>为了拿到真实数字，我真的在 v1.1 上做了一遍这个改动，数完又撤掉了——<strong>它不在 <code>case/</code> 里</strong>。改动是两个文件加一个新增：</p>
+<p>为了拿到真实数字，我真的在 v1.1 上做了一遍这个改动，数完又撤掉了——它不在 <code>case/</code> 里。改动是两个文件加一个新增：</p>
 <pre><code class="language-text">src/main.ts        2 处：读搜索框的值，渲染前先过滤
 index.html         1 处：加一个输入框
 src/search.ts      新增
@@ -952,7 +952,7 @@ src/search.ts      新增
 <p><strong>同类改动应该便宜。新维度必然贵。</strong></p>
 <p>为什么新维度必然贵？因为它要穿过所有已经存在的层。你给一个系统加一个维度，这个维度就得在每一层有对应的表达：数据结构里有、存储里有、渲染里有、界面里有。这不是抽象设计得差，这是维度本身的代价。</p>
 <p>而同类改动贵，就说明有问题了。第 06 章那个数组版渲染器，加第五种语法是加一个数组元素。如果加第五种语法要改五个文件，那个设计就是失败的。</p>
-<p><strong>搜索是「新维度」，三个文件正常；加第五种语法是「同类」，三个文件就是问题。</strong> 这个区分就是下一节要讲的东西。</p>
+<p>搜索是「新维度」，三个文件正常；加第五种语法是「同类」，三个文件就是问题。 这个区分就是下一节要讲的东西。</p>
 <h2>用这个区分做诊断</h2>
 <p>具体做法是这样。</p>
 <p>第一步，写下未来三个月最可能做的六到八个改动。</p>
@@ -1137,7 +1137,7 @@ function renderNoteList(notes: Note[], selectedId: string, env: Env, handlers: H
 <h2>环境：注入一次，然后别再传</h2>
 <p><code>env</code> 属于环境。它对所有层都一样，没有理由跟着调用链走。</p>
 <p>两种处理方式，选一种。</p>
-<p><strong>方式一，每个模块注册一次。</strong> 导出工厂函数，接受 env：</p>
+<p>方式一，每个模块注册一次。 导出工厂函数，接受 env：</p>
 <pre><code class="language-ts">export function createExporter(env: Env) {
   return function exportNotes(notes: Note[]): string {
     env.logger.info(&#39;开始导出&#39;)
@@ -1168,7 +1168,7 @@ function renderNoteList(notes: Note[], selectedId: string, env: Env, handlers: H
        └─ renderNoteList(需要 env)
 </code></pre>
 <p><code>renderSidebar</code> 卡在中间，它自己不用 <code>env</code>，只是往下传。</p>
-<p><strong>这说明 <code>renderSidebar</code> 的签名被别人的需要污染了。</strong> 它变成了一个转接头。</p>
+<p>这说明 <code>renderSidebar</code> 的签名被别人的需要污染了。 它变成了一个转接头。</p>
 <p>可能的解法有两个方向。</p>
 <p>方向一，让中间层不需要存在。<code>renderSidebar</code> 做的事情如果只是「取出 <code>state.notes</code> 然后调 <code>renderNoteList</code>」，那它可能根本不该是一个独立函数。去掉它，透传自动消失。</p>
 <p>方向二，让需要 env 的那层自己拿。<code>renderNoteList</code> 需要 <code>env.logger</code>，而 logger 属于环境，用上面方式一处理掉，<code>renderSidebar</code> 的签名立刻干净。</p>
@@ -1379,7 +1379,7 @@ render()
 <h2>四个抽象的下场</h2>
 <p><code>StorageProvider</code> 该留，但形状要改。</p>
 <p>第 04 章拆过它：它和 <code>LocalStorageProvider</code> 方法一一对应，是誊本。但那不是说存储不该被抽象，是说抽的时机和依据都错了。</p>
-<p>正确的做法是先定义一个由使用方决定的接口（<code>all()</code> 和 <code>append()</code>，异步），再去实现。这个接口将来会有第二个实现——只要速记应用开始同步，它就要。</p>
+<p>正确的做法是先定义一个由使用方决定的接口（<code>all()</code> 和 <code>append()</code>，异步），再去实现。v1.1 里的 <code>MemoryNoteStore</code> 就是照这个接口写的第二个实现，测试在用。</p>
 <p><code>NoteFactory</code> 该删。</p>
 <p>它造一个三字段对象，没有逻辑，没有分支，没有变化点。内联掉。</p>
 <p><code>NoteRepository</code> 该删。</p>
@@ -1448,7 +1448,7 @@ src/main.ts           界面 + 组装
 <p><strong>抽象买的就是这条曲线的斜率。</strong> 你付一次性的建立成本，换的是「以后每次加功能都便宜一点」。</p>
 <p>所以判断一个抽象值不值，等价于问：它让你的曲线变平了吗？</p>
 <p><code>StorageProvider</code>（誊本版）没让曲线变平：换存储这个改动你根本不常做，而它把常做的改动推高了。改好形状之后，换存储从四处降到一处。</p>
-<p><strong>但「加字段」那一类它没压下来</strong>——两边都是三处。因为加字段的路径本来就不经过存储层，它经过的是类型、创建、界面。<strong>一个抽象只能压平它自己那条路径上的改动。</strong></p>
+<p>但「加字段」那一类它没压下来——两边都是三处。因为加字段的路径本来就不经过存储层，它经过的是类型、创建、界面。一个抽象只能压平它自己那条路径上的改动。</p>
 <p><code>NoteFactory</code> 没让任何一类变动平。</p>
 <h2>终点版自己也留了个洞</h2>
 <p>写完 v1.1 我在浏览器里试了一件事。</p>
@@ -1463,7 +1463,7 @@ src/main.ts           界面 + 组装
 <pre><code class="language-ts">const tags = (n.tags ?? []).map((t) =&gt; `&lt;span class=&quot;tag&quot;&gt;${escapeHtml(t)}&lt;/span&gt;`).join(&#39;&#39;)
 </code></pre>
 <p>这个补丁值得单独说，因为它印证了这本书的论点。第 00 章用来衡量重构的那个标准——「不只看它加了什么，还要看它有没有弄丢什么」，在最后一章又用上了一次。而这次是我自己犯的。</p>
-<p><strong>抽象的问题会被看见，转义的问题不会被看见。</strong> 少了 <code>escapeHtml</code> 不会有任何报错，不会有测试失败，页面看起来一切正常。它是那种「只有出事那天才知道」的洞。</p>
+<p><strong><strong>抽象的问题会被看见，转义的问题不会被看见。</strong></strong> 少了 <code>escapeHtml</code> 不会有任何报错，不会有测试失败，页面看起来一切正常。它是那种「只有出事那天才知道」的洞。</p>
 <h2>终点不是最少抽象</h2>
 <p>这是全书最后要纠正的一个印象。</p>
 <p>前面十四章删了很多东西，可能让你觉得结论是「抽象越少越好」。不是。</p>
@@ -1473,7 +1473,7 @@ src/main.ts           界面 + 组装
 <p><strong>每一个抽象都有至少两个消费者，或者一个真实的、会来的第二个实现。</strong></p>
 </blockquote>
 <p>按这条检查 v1.1。这里面有两个抽象，逐个看：</p>
-<p><code>NoteStore</code>。生产代码里只有一个消费者（<code>main.ts</code>）。但它有第二个真实存在的实现：<code>MemoryNoteStore</code>，测试在用。而且接口比实现窄——它只提供 <code>all()</code> 和 <code>append()</code>，不承诺同步、不承诺一次写几条。</p>
+<p><code>NoteStore</code>。生产代码里只有一个消费者（<code>main.ts</code>）。但它有第二个真实存在的实现：<code>MemoryNoteStore</code>，测试在用。而且接口比实现窄：它只提供 <code>all()</code> 和 <code>append()</code>，不承诺同步、不承诺一次写几条。</p>
 <p>渲染规则数组。一个消费者（<code>render</code>）。但那个数组本身就是那六条规则的唯一表达，不存在「给谁用」的问题——它是数据，不是抽象。</p>
 <p>两个都过得去，但理由是「有真实的第二个实现」和「接口比实现窄」，不是「有很多消费者」。</p>
 <p>这个区别重要。第 00 章批评过一种说法：「现在只有一个实现，但三个月后一定会有第二个」。判断的依据必须是已经存在的东西，不能是想象。<code>MemoryNoteStore</code> 是已经写在那儿、有测试在跑的；「以后要同步所以会有云端实现」不是。</p>
