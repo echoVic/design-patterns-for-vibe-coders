@@ -605,6 +605,10 @@ export function renderWith(text: string, options: RenderOptions): string {
 <pre><code class="language-bash">cd case &amp;&amp; npm install &amp;&amp; npm run verify:v0.4
 </code></pre>
 <p>它拿八个样例乘六组开关跑两遍，比对结果。八乘六全部相同，才说明这两份是同一个东西。上面那两个问题也因此消失了。</p>
+<ul>
+<li>顺序变成数据：数组的顺序就是执行顺序。想插一条新规则，插在数组的哪一行就是第几个执行，看一眼就知道。还可以为这个顺序单独写断言。</li>
+<li>名字和行为绑在一起：每条规则是一个对象字面量，<code>name</code> 和 <code>apply</code> 在同一行里。它们不可能对不上——要对不上就得先把它俩拆开。</li>
+</ul>
 <h2>但「一致」不等于「对」</h2>
 <p>写完那个对拍脚本之后，我又看了一遍它报的「输出全部一致」，觉得哪里不对。</p>
 <p>两版一致，只能证明它们做的是同一件事，证明不了那件事是对的。</p>
@@ -622,10 +626,6 @@ export function renderWith(text: string, options: RenderOptions): string {
 </code></pre>
 <p>现在把引用规则改回错的那种写法，脚本会报「期望输出不符」，而不是继续绿灯。</p>
 <p><strong>这个教训比那一行正则值钱</strong>：对拍能防住「改坏了」，防不住「一开始就写错了」。要防后者，得有一份独立于实现之外的期望值。</p>
-<ul>
-<li>顺序变成数据：数组的顺序就是执行顺序。想插一条新规则，插在数组的哪一行就是第几个执行，看一眼就知道。还可以为这个顺序单独写断言。</li>
-<li>名字和行为绑在一起：每条规则是一个对象字面量，<code>name</code> 和 <code>apply</code> 在同一行里。它们不可能对不上——要对不上就得先把它俩拆开。</li>
-</ul>
 <p>这套改法有个名字叫表驱动（table-driven），但名字不重要。要记住的是这个动作：</p>
 <blockquote>
 <p>当一个 if-else 链的每个分支长得一模一样、只是数据不同的时候，它就该变成一个数组。</p>
