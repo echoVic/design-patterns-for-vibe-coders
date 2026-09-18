@@ -34,7 +34,16 @@ async function run(name: string, store: NoteStore): Promise<void> {
   assert(afterSecond[1]!.text === '第一条', `${name}: 旧的应在后面`)
 
   // 标签跟着走
-  assert(afterSecond[1]!.tags[0] === '设计', `${name}: 标签应保留`)
+  const second = afterSecond[1]
+  assert(second !== undefined, `${name}: 旧笔记应还在`)
+  assert(second.tags[0] === '设计', `${name}: 标签应保留`)
+
+  // 契约是「最近追加的在前」，不是「createdAt 大的在前」。
+  // 追加一条 createdAt 更早的，它仍然排在前面。
+  const older = createNote({ text: '补录的旧笔记', createdAt: 500, }, [])
+  await store.append(older)
+  const afterOlder = await store.all()
+  assert(afterOlder[0]?.text === '补录的旧笔记', `${name}: 后追加的应排在前面，与 createdAt 无关`)
 }
 
 // MemoryNoteStore：不需要浏览器
@@ -49,4 +58,4 @@ const store = new Map<string, string>()
 const { LocalNoteStore } = await import('./src/store')
 await run('LocalNoteStore', new LocalNoteStore())
 
-console.log('✓ 两个实现通过同一组断言：空了读空、追加能读回、新的排最前、标签保留')
+console.log('✓ 两个实现通过同一组断言：空了读空、追加能读回、最近追加的在前（与 createdAt 无关）、标签保留')

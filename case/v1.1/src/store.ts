@@ -9,7 +9,7 @@ import type { Note, NoteDraft } from './types'
  * 第二个实现是 MemoryNoteStore，store.test.ts 在用。
  */
 export interface NoteStore {
-  /** 读出全部笔记，按时间倒序。 */
+  /** 读出全部笔记，最近追加的在前。 */
   all(): Promise<Note[]>
 
   /** 追加一条。 */

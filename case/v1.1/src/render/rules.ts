@@ -1,14 +1,11 @@
-export interface RenderOptions {
-  inlineCode?: boolean
-  bold?: boolean
-  strike?: boolean
-  link?: boolean
-  quote?: boolean
-  list?: boolean
-}
-
+/**
+ * 六种语法的差异只有三件事：叫什么、匹配什么、换成什么。
+ * 写成一张表，顺序就是执行顺序，开关就是行的 name。
+ */
 export interface Rule {
-  readonly name: keyof RenderOptions
+  /** 规则名，同时也是开关名。 */
+  readonly name: string
+  /** 界面上显示的名字。 */
   readonly label: string
   readonly apply: (html: string) => string
 }
@@ -16,12 +13,21 @@ export interface Rule {
 export const escapeHtml = (s: string): string =>
   s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!)
 
-/** 数组顺序就是执行顺序：行内元素在前，块级在后。 */
-export const rules: readonly Rule[] = [
-  { name: 'inlineCode', label: '行内代码', apply: (h) => h.replace(/`(.+?)`/g, '<code>$1</code>') },
-  { name: 'bold',       label: '加粗',     apply: (h) => h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') },
-  { name: 'strike',     label: '删除线',   apply: (h) => h.replace(/~~(.+?)~~/g, '<s>$1</s>') },
-  { name: 'link',       label: '链接',     apply: (h) => h.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') },
-  { name: 'quote',      label: '引用',     apply: (h) => h.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>') },
-  { name: 'list',       label: '列表',     apply: (h) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
-]
+/**
+ * 规则的唯一来源。加一种语法在这里加一行。
+ *
+ * 顺序是行为的一部分：行内规则在前，块级在后。
+ */
+export const rules = [
+  { name: 'inlineCode', label: '行内代码', apply: (h: string) => h.replace(/`(.+?)`/g, '<code>$1</code>') },
+  { name: 'bold',       label: '加粗',     apply: (h: string) => h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') },
+  { name: 'strike',     label: '删除线',   apply: (h: string) => h.replace(/~~(.+?)~~/g, '<s>$1</s>') },
+  { name: 'link',       label: '链接',     apply: (h: string) => h.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') },
+  { name: 'quote',      label: '引用',     apply: (h: string) => h.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>') },
+  { name: 'list',       label: '列表',     apply: (h: string) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
+] as const satisfies readonly Rule[]
+
+/** 开关名从表推导，不会再和规则表脱节。 */
+export type RuleName = (typeof rules)[number]['name']
+
+export type RenderOptions = Partial<Record<RuleName, boolean>>

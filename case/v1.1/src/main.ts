@@ -1,17 +1,15 @@
 import { LocalNoteStore, createNote, type NoteStore } from './store'
-import { render, escapeHtml } from './render'
+import { render, escapeHtml, type RenderOptions } from './render'
 import { parseTags } from './tags'
 import type { Note, NoteDraft } from './types'
-
-const DEFAULT_OPTIONS = { inlineCode: true, bold: true, strike: true, link: true, quote: true, list: true }
 
 /** 界面和存储在这里接上。全程序只有这一个地方创建具体实现。 */
 export interface AppDeps {
   store: NoteStore
-  options?: typeof DEFAULT_OPTIONS
+  options?: RenderOptions
 }
 
-export function createApp({ store, options = DEFAULT_OPTIONS }: AppDeps) {
+export function createApp({ store, options }: AppDeps) {
   const input = document.querySelector<HTMLTextAreaElement>('#input')!
   const list = document.querySelector<HTMLElement>('#list')!
   const count = document.querySelector<HTMLElement>('#count')!

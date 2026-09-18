@@ -17,7 +17,7 @@ src/main.ts      界面 + 组装
 |---|---|---|
 | `NoteStore` 的消费者 | 1（NoteRepository） | 1（main.ts） |
 | 接口形状 | 照抄 localStorage（同步 load/save） | 由使用方定义（异步 all/append） |
-| 加一种语法 | 改 4 个文件 | 改 2 处（规则表 + 默认开关） |
+| 加一种语法 | 改 4 个文件 | 改 1 行（规则表加一项，开关类型自动跟着长） |
 | 第二实现 | 不存在 | `MemoryNoteStore`，`store.test.ts` 真的在用 |
 | 派生的「几 条」 | 单独一个 renderCount，会漏调 | 在唯一入口里算 |
 | `NoteFactory` / `NoteRepository` / `NoteService` | 三个直通层 | 全部内联掉 |
