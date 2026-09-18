@@ -27,3 +27,14 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.026em;margin:0 0 6px}
 .note b{font-weight:600}
 .tag{display:inline-block;font-size:11.5px;color:var(--mint-ink);
      background:var(--mint-bg);padding:2px 8px;border-radius:6px;margin-left:6px}
+
+/* 渲染出来的语法。默认样式（蓝色下划线链接、无缩进的引用）和这套设计语言不搭，统一一下。 */
+.note a{color:var(--mint-ink);text-decoration:none;
+        border-bottom:1px solid rgba(0,199,190,.35)}
+.note s{color:var(--label3);text-decoration-thickness:1px}
+.note blockquote{margin:8px 0;padding:6px 0 6px 12px;
+                 border-left:2.5px solid rgba(0,199,190,.45);
+                 color:var(--label2);border-radius:0 4px 4px 0}
+.note blockquote + blockquote{margin-top:2px}
+.note li{margin-left:18px;padding-left:2px;color:var(--label2)}
+.note li + li{margin-top:2px}
