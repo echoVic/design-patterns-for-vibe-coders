@@ -1464,7 +1464,7 @@ src/main.ts           界面 + 组装
 <pre><code class="language-ts">const tags = (n.tags ?? []).map((t) =&gt; `&lt;span class=&quot;tag&quot;&gt;${escapeHtml(t)}&lt;/span&gt;`).join(&#39;&#39;)
 </code></pre>
 <p>这个补丁值得单独说，因为它印证了这本书的论点。第 00 章用来衡量重构的那个标准——「不只看它加了什么，还要看它有没有弄丢什么」，在最后一章又用上了一次。而这次是我自己犯的。</p>
-<p><strong><strong>抽象的问题会被看见，转义的问题不会被看见。</strong></strong> 少了 <code>escapeHtml</code> 不会有任何报错，不会有测试失败，页面看起来一切正常。它是那种「只有出事那天才知道」的洞。</p>
+<p><strong>抽象的问题会被看见，转义的问题不会被看见。</strong> 少了 <code>escapeHtml</code> 不会有任何报错，不会有测试失败，页面看起来一切正常。它是那种「只有出事那天才知道」的洞。</p>
 <h2>终点不是最少抽象</h2>
 <p>这是全书最后要纠正的一个印象。</p>
 <p>前面十四章删了很多东西，可能让你觉得结论是「抽象越少越好」。不是。</p>
