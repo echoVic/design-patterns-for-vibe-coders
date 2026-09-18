@@ -144,17 +144,19 @@ function escapeHtml(s: string): string {
 
 拿策略模式举例。
 
-在 Java 里：
+在 Java 里（不用看懂语法，看形状就行）：
 
 ```java
-interface ExportStrategy { String export(Data d); }
-class CsvStrategy implements ExportStrategy { ... }
-class JsonStrategy implements ExportStrategy { ... }
+interface ExportStrategy { String export(Data d); }   // 声明「导出」是一个东西
+class CsvStrategy implements ExportStrategy { ... }   // 导出成 CSV
+class JsonStrategy implements ExportStrategy { ... }  // 导出成 JSON
 class Exporter {
-  private ExportStrategy strategy;
-  String run(Data d) { return strategy.export(d); }
+  private ExportStrategy strategy;                    // 持有一个「导出」
+  String run(Data d) { return strategy.export(d); }   // 用它
 }
 ```
+
+**四段代码，做的是「把导出方式传进来」这一件事。** 在 Java 里，你没法直接传一个函数，只能先把它包成对象，所以需要接口和实现类。
 
 在 TypeScript 里，同一个职责分配：
 
@@ -400,7 +402,7 @@ note-factory.ts    note-repository.ts
 
 ![v0.2 的调用图：main.ts 调 note-service.ts，后者调 note-factory.ts 和 note-repository.ts，再往下是 storage-provider 接口和它唯一的实现。图右侧标出哪些节点是直通的。](../figures/fig-03-call-graph.svg)
 
-九行，画完了。
+画完了。
 
 这张图里有两种节点。`main.ts`、`note-service.ts`、`note-repository.ts`、`local-storage-provider.ts` 在调用链上；`note-factory.ts` 挂在旁边，是被持有的，只被调用一次。
 
@@ -1554,6 +1556,8 @@ function withLoadError<T>(
 
 差异在中间一步，用参数把那个「洞」传进来：
 
+（`<T>` 是泛型：`T` 代表「读出来的东西是什么类型」，调用时由实际传进去的函数决定。）
+
 ```ts
 function readWithToast<T>(label: string, read: () => T): T | undefined {
   try {
@@ -1596,9 +1600,15 @@ readWithToast('读取笔记', () => storage.load())
 
 # 谁都需要那个对象
 
-## 五个参数一路传下去
+## 三个参数，传了三层
 
-加了搜索之后，渲染链路变成这样：
+加了搜索之后，渲染拆成了三层。三个类型先说明一下：
+
+- `AppState`：当前界面的状态（有哪些笔记、选中哪条、搜索词是什么）
+- `Env`：环境，「整个程序里同一个」的那些东西（日志器、配置、存储客户端）
+- `Handlers`：回调（点笔记、删笔记该做什么）
+
+为了让搜索词能传到底，渲染链路变成了这样：
 
 ```ts
 function renderApp(state: AppState, env: Env, handlers: Handlers) {
