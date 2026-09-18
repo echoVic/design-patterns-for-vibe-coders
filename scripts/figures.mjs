@@ -225,7 +225,7 @@ await mkdir(OUT, { recursive: true })
   const f = new Fig(760, '两类改动')
   f.box(24, 30, 340, ['同类改动'], { fill: C.mintBg, h: 40, center: true, fs: 15, color: C.mintInk })
   f.note(24, 84, '再加一个已有维度里的东西', { fs: 13, color: C.soft })
-  ;['加第五种语法', '加第四个导出格式', '加第三个存储实现'].forEach((t, i) => {
+  ;['加第七种语法', '加第三个存储实现', '多加一处 new'].forEach((t, i) => {
     f.box(24, 106 + i * 44, 340, [t], { fill: '#FFFFFF', stroke: C.line, h: 36, pad: 9, fs: 13.5 })
   })
   f.box(24, 246, 340, ['应该只改一两个文件'], { fill: C.mintBg, h: 40, center: true, fs: 13.5, color: C.mintInk })
