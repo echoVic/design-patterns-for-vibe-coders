@@ -1,3 +1,5 @@
+<img src="figures/cover.svg" width="360" align="right" alt="给 Vibe Coder 的设计模式">
+
 # 给 Vibe Coder 的设计模式
 
 AI 会写代码，但不会判断结构值不值。
@@ -54,7 +56,7 @@ cd case && npm install && npm run dev
 
 ```
 manuscripts/   各章 markdown
-figures/       7 张插图（手写 SVG）
+figures/       封面 + 7 张插图（手写 SVG）
 case/          贯穿案例，v0.1 → v1.1
 design/        视觉基准 + 插图的两条踩坑记录
 notes/         早期探索留下的发现
@@ -67,7 +69,8 @@ dist/          book.md / book.html
 ## 重新生成
 
 ```bash
-node scripts/figures.mjs      # 插图
+node scripts/figures.mjs      # 7 张插图
+node scripts/cover.mjs        # 封面
 node scripts/build-book.mjs   # dist/book.md
 node scripts/build-html.mjs   # dist/book.html
 ```
