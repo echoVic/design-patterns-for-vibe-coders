@@ -56,6 +56,6 @@ for (const opts of optionSets) {
 if (failed === 0) {
   console.log(`✓ ${samples.length} 个样例 × ${optionSets.length + 1} 组开关，输出全部一致`)
 } else {
-  console.log(`✗ 共 ${failed} 处不一致`)
-  process.exit(1)
+  // 抛异常而不是 process.exit，这样不需要 @types/node
+  throw new Error(`✗ 共 ${failed} 处不一致`)
 }
