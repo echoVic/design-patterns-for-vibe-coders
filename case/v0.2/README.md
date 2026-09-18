@@ -1,15 +1,17 @@
 # v0.2 —— 重构之后
 
-同样的功能，从 44 行变成 7 个文件。这是「帮我重构得专业点」的典型产出。
+同样的功能，从 44 行 1 个文件，变成 149 行 7 个文件。这是「帮我重构得专业点」的典型产出。
 
 ```
-src/types.ts                          13 行
-src/storage/storage-provider.ts       13 行   ← 接口
-src/storage/local-storage-provider.ts 24 行   ← 唯一的实现
-src/domain/note-factory.ts            13 行   ← 造一个三字段对象
-src/domain/note-repository.ts         15 行
-src/domain/note-service.ts            23 行
-src/main.ts                           47 行
+src/types.ts                            15 行
+src/storage/storage-provider.ts         15 行   ← 接口
+src/storage/local-storage-provider.ts   21 行   ← 唯一的实现
+src/domain/note-factory.ts              12 行   ← 造一个三字段对象
+src/domain/note-repository.ts           15 行
+src/domain/note-service.ts              29 行
+src/main.ts                             42 行
+                                       ─────
+                                       149 行
 ```
 
 **第 00 章要拆的就是这个。** 每个文件单看都合理，问题在结构上：
