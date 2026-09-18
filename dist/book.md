@@ -256,7 +256,9 @@ main.ts           input 事件触发，400ms 后往数组前面塞一条
 
 一个文件。
 
-**两条路做的事完全一样。** 差别只在中间要经过几个文件。
+![同一个功能的两条路：v0.1 里保存一条笔记只有 main.ts 一个文件、跳转 0 次；v0.2 里要经过 main.ts、note-service.ts、note-repository.ts、local-storage-provider.ts 四个文件、跳转 3 次。](../figures/fig-01-two-paths.svg)
+
+两条路做的事完全一样。差别只在中间要经过几个文件。
 
 ## 数一下你跳了几次
 
@@ -393,6 +395,8 @@ note-factory.ts    note-repository.ts
                       │ 实现
                 local-storage-provider.ts
 ```
+
+![v0.2 的调用图：main.ts 调 note-service.ts，后者调 note-factory.ts 和 note-repository.ts，再往下是 storage-provider 接口和它唯一的实现。图右侧标出哪些节点是直通的。](../figures/fig-03-call-graph.svg)
 
 九行，画完了。
 
@@ -2007,6 +2011,8 @@ src/main.ts           界面 + 组装
 `v0.2` 一开始就贵，而且它的成本不随功能数量下降。四个抽象全都没在赚钱，加功能还是要穿三层。
 
 `v1.1` 的起点比 v0.1 高一点（多五个文件），但它的曲线是平的。
+
+![三条曲线：v0.1 起点最低但涨得最快，最后穿过 v1.1；v0.2 起点就高而且几乎不降；v1.1 起点中等，最平。](../figures/fig-16-cost-curve.svg)
 
 **抽象买的就是这条曲线的斜率。** 你付一次性的建立成本，换的是「以后每次加功能都便宜一点」。
 

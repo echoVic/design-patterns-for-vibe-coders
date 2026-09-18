@@ -31,7 +31,9 @@ if (files.length === 0) throw new Error('manuscripts/ 下没有章节')
 
 const parts = []
 for (const [i, f] of files.entries()) {
-  parts.push((await readFile(join(src, f), 'utf8')).trim())
+  // 图片路径要相对 dist/ 修正
+  const body = (await readFile(join(src, f), 'utf8')).trim().replace(/\]\(figures\//g, '](../figures/')
+  parts.push(body)
   if (i < files.length - 1) parts.push('\n\n---\n\n')
 }
 
