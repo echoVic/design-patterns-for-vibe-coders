@@ -20,14 +20,14 @@ async function run(name: string, store: NoteStore): Promise<void> {
   assert((await store.all()).length === 0, `${name}: 初始应为空`)
 
   // 追加一条能读回来
-  const a = createNote({ text: '第一条', createdAt: 1000, pinned: false }, ['设计'])
+  const a = createNote({ text: '第一条', createdAt: 1000, }, ['设计'])
   await store.append(a)
   const afterFirst = await store.all()
   assert(afterFirst.length === 1, `${name}: 追加后应有 1 条`)
   assert(afterFirst[0]!.text === '第一条', `${name}: 正文应读回`)
 
   // 新加的排在最前
-  const b = createNote({ text: '第二条', createdAt: 2000, pinned: false }, [])
+  const b = createNote({ text: '第二条', createdAt: 2000, }, [])
   await store.append(b)
   const afterSecond = await store.all()
   assert(afterSecond[0]!.text === '第二条', `${name}: 新加的应排在最前`)
