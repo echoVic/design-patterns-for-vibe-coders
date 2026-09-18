@@ -1356,7 +1356,7 @@ function createStorage(env: 'browser' | 'test'): StorageProvider {
 
 我想给速记加搜索。
 
-改完之后，`git diff` 里是两个改动加一个新增：
+为了拿到真实数字，我真的在 v1.1 上做了一遍这个改动，数完又撤掉了——**它不在 `case/` 里**。改动是两个文件加一个新增：
 
 ```text
 src/main.ts        2 处：读搜索框的值，渲染前先过滤
