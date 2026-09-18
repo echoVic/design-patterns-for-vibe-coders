@@ -56,7 +56,7 @@ cd case && npm install && npm run dev
 
 ```
 manuscripts/   各章 markdown
-figures/       封面 + 7 张插图（手写 SVG）
+figures/       封面 + 8 张插图（手写 SVG）
 case/          贯穿案例，v0.1 → v1.1
 design/        视觉基准 + 插图的两条踩坑记录
 notes/         早期探索留下的发现
@@ -69,11 +69,14 @@ dist/          book.md / book.html
 ## 重新生成
 
 ```bash
-node scripts/figures.mjs      # 7 张插图
+node scripts/figures.mjs      # 8 张插图
 node scripts/cover.mjs        # 封面
 node scripts/build-book.mjs   # dist/book.md
 node scripts/build-html.mjs   # dist/book.html
+node scripts/check-claims.mjs # 核对书里的数字断言
 ```
+
+**改完案例代码一定要跑最后一条。** 书里引用了各版本的行数，代码一改就会漂移，而且不会有任何报错——只有读者去数才发现。
 
 `figures.mjs` 里所有尺寸都由布局推导，不手填。改完插图记得验一遍 XML 合法性：
 
