@@ -7,5 +7,5 @@ export function render(text: string, options: RenderOptions): string {
     .reduce((html, rule) => rule.apply(html), escapeHtml(text))
 }
 
-export { rules }
+export { rules, escapeHtml }
 export type { RenderOptions }

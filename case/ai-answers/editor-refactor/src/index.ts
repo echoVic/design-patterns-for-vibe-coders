@@ -46,7 +46,7 @@ export { DomRenderer } from './renderer.js';
 export type { DomRendererOptions, RenderModel, Renderer } from './renderer.js';
 
 export { MemoryStorage } from './storage.js';
-export type { EditorStorage, Note, NoteDraft } from './storage.js';
+export type { EditorStorage, Note, NoteDraft, NoteSeed } from './storage.js';
 
 export {
   DEFAULT_THEME_NAME,

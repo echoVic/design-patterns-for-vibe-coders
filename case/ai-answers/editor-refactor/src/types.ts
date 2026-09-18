@@ -43,7 +43,8 @@ export interface AppearanceOptions {
   readonly theme?: Theme | ThemeName;
   readonly fontSize?: number;
   readonly lineHeight?: number;
-  readonly contentWidth?: ContentWidthName | ContentWidth;
+  /** 具名档位、像素数，或历史值 `'auto'`（等同 standard）。 */
+  readonly contentWidth?: ContentWidthName | ContentWidth | 'auto';
 }
 
 /** 归一后的行为设置。 */
@@ -89,7 +90,10 @@ export interface ResolvedEditorOptions {
   readonly notes: readonly Note[];
 }
 
-/** 老的 12 个位置参数，顺序原样保留，只作为兼容入口。 */
+/**
+ * 老的 12 个位置参数，顺序原样保留，只作为兼容入口。
+ * 第 6 个参数连历史上出现过的 `'auto'` 也一并接受。
+ */
 export type LegacyEditorArgs = readonly [
   storage: EditorStorage,
   renderer: Renderer,
@@ -97,7 +101,7 @@ export type LegacyEditorArgs = readonly [
     theme: Theme | ThemeName,
     fontSize: number,
     lineHeight: number,
-    contentWidth: ContentWidthName | ContentWidth,
+    contentWidth: ContentWidthName | ContentWidth | 'auto',
     autoSaveDelayMs: number,
     maxNotes: number,
     bold: boolean,

@@ -1,5 +1,5 @@
 import { LocalNoteStore, createNote, type NoteStore } from './store'
-import { render } from './render'
+import { render, escapeHtml } from './render'
 import { parseTags } from './tags'
 import type { Note, NoteDraft } from './types'
 
@@ -26,7 +26,8 @@ export function createApp({ store, options = DEFAULT_OPTIONS }: AppDeps) {
       .map((n) => {
         const time = new Date(n.createdAt).toTimeString().slice(0, 5)
         // 早前版本写入的笔记没有 tags 字段，读的时候要兜住
-        const tags = (n.tags ?? []).map((t) => `<span class="tag">${t}</span>`).join('')
+        // 标签是用户输入的，同样要转义——#<img/src=x/onerror=...> 这种没有空格，会被正则整个吃进去
+        const tags = (n.tags ?? []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')
         return `<div class="note"><time>${time}</time>${render(n.text, options)}${tags}</div>`
       })
       .join('')

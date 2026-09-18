@@ -62,6 +62,10 @@ export function resolveContentWidth(width: AppearanceOptions['contentWidth']): n
     }
     return width;
   }
+  if (width === 'auto') {
+    // 历史值：'auto' 就是标准宽度。
+    return CONTENT_WIDTH_PX.standard;
+  }
   if (!isContentWidthName(width)) {
     throw new RangeError(`contentWidth 不是已知档位："${width}"`);
   }

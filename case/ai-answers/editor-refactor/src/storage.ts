@@ -17,6 +17,9 @@ export interface Note {
 /** 新增笔记时由 Editor 提供的字段，id 与时间戳由存储层补齐。 */
 export type NoteDraft = Pick<Note, 'title' | 'body'>;
 
+/** 预置数据：需要一个 id，时间戳可选。 */
+export type NoteSeed = Pick<Note, 'id' | 'title' | 'body'> & Partial<Pick<Note, 'updatedAt'>>;
+
 export interface EditorStorage {
   list(): Promise<readonly Note[]>;
   get(id: string): Promise<Note | undefined>;
@@ -29,9 +32,9 @@ export class MemoryStorage implements EditorStorage {
   readonly #notes = new Map<string, Note>();
   #sequence = 0;
 
-  constructor(seed: readonly Note[] = []) {
+  constructor(seed: readonly NoteSeed[] = []) {
     for (const note of seed) {
-      this.#notes.set(note.id, note);
+      this.#notes.set(note.id, { updatedAt: Date.now(), ...note });
       this.#sequence += 1;
     }
   }
