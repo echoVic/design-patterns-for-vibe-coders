@@ -6,8 +6,9 @@
  */
 
 import type { SyntaxFeature } from './markdown-syntax.js';
+import type { Note } from './storage.js';
 import type { ResolvedTheme } from './theme.js';
-import type { Appearance, Behavior, Note } from './types.js';
+import type { Appearance } from './types.js';
 
 /** 交给渲染层的一份不可变快照。 */
 export interface RenderModel {

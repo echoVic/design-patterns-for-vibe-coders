@@ -44,7 +44,9 @@ export interface MarkdownSyntaxConfig {
 export type MarkdownSyntaxInput = MarkdownSyntaxConfig | MarkdownSyntaxOptions;
 
 /** 遍历语法记录时用的窄化视窗，避免 `Record` 索引访问被当成 `boolean | undefined`。 */
-function entriesOf(syntax: MarkdownSyntax): Array<[SyntaxFeature, boolean]> {
+export function syntaxEntries(
+  syntax: MarkdownSyntaxOptions,
+): Array<[SyntaxFeature, boolean]> {
   return Object.entries(syntax).filter(
     (entry): entry is [SyntaxFeature, boolean] =>
       typeof entry[1] === 'boolean' && isSyntaxFeature(entry[0]),
@@ -91,7 +93,7 @@ export function mergeMarkdownSyntax(
 ): MarkdownSyntax {
   const result = { ...base };
   if (patch !== undefined) {
-    for (const [feature, enabled] of entriesOf(patch)) {
+    for (const [feature, enabled] of syntaxEntries(patch)) {
       result[feature] = enabled;
     }
   }
@@ -124,7 +126,7 @@ class MarkdownSyntaxPluginImpl implements MarkdownSyntaxPlugin {
   }
 
   enabledFeatures(): SyntaxFeature[] {
-    return entriesOf(this.#syntax)
+    return syntaxEntries(this.#syntax)
       .filter(([, enabled]) => enabled)
       .map(([feature]) => feature);
   }
