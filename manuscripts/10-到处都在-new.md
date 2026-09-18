@@ -56,6 +56,8 @@ export function createSettingsPanel(service: NoteService) { /* ... */ }
 export function createExporter(service: NoteService) { /* ... */ }
 ```
 
+![左边是散落的创建：main.ts、settings-panel.ts、export.ts 三处各 new 一个 LocalStorageProvider；右边是组合根：只有 main.ts 创建一次，然后往外传。](figures/fig-10-composition-root.svg)
+
 没有工厂，没有容器，没有注册表。**只有「谁负责创建」这一个决定被明确下来了。**
 
 这个模式有个名字叫组合根（composition root）：**整个程序里只有一个地方知道怎么把东西拼起来，其他地方只管用。** 名字可以忘，那个决定不能忘。

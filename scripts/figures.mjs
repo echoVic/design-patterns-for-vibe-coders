@@ -93,7 +93,7 @@ await mkdir(OUT, { recursive: true })
   })
   f.note(420, y + 4, '4 个文件', { fs: 13, color: C.ink })
   f.note(420, y + 26, '跳转 3 次', { fs: 13, color: C.ink })
-  await f.save('fig-03-two-paths.svg')
+  await f.save('fig-01-two-paths.svg')
 }
 
 // ── 图 3-2：v0.2 的调用图，标出直通节点（第 03 章）────────────
@@ -152,4 +152,91 @@ await mkdir(OUT, { recursive: true })
   f.note(310, BOT + 56, '起点就高，而且不降', { fs: 12.5, color: C.red })
   f.note(520, BOT + 56, '起点中等，最平', { fs: 12.5, color: C.ink })
   await f.save('fig-16-cost-curve.svg', 40)
+}
+
+// ── 图 06-1：六个 if 对六条规则（第 06 章）──────────────────
+{
+  const f = new Fig(760, '六个 if 与六条规则')
+  f.note(24, 30, '分支版：顺序只存在于代码的行序里', { fs: 13.5, color: C.soft })
+  const ifs = ['if (options.inlineCode)', 'if (options.bold)', 'if (options.strike)',
+               'if (options.link)', 'if (options.quote)', 'if (options.list)']
+  ifs.forEach((t, i) => {
+    f.box(24, 44 + i * 34, 300, [t], { fill: C.card, h: 28, pad: 6, mono: true, fs: 12.5, rx: 6, color: C.soft })
+  })
+  f.note(24, 44 + 6 * 34 + 6, '加一条：要在中间找个位置插进去', { fs: 12.5, color: C.red })
+
+  f.note(420, 30, '数组版：顺序就是数组顺序', { fs: 13.5, color: C.soft })
+  const rules = ['inlineCode', 'bold', 'strike', 'link', 'quote', 'list']
+  rules.forEach((t, i) => {
+    f.box(420, 44 + i * 34, 200, [t], { fill: C.mintBg, h: 28, pad: 6, mono: true, fs: 12.5, rx: 6, color: C.mintInk })
+    f.note(632, 63 + i * 34, ['第 1 个执行', '第 2 个', '第 3 个', '第 4 个', '第 5 个', '第 6 个'][i],
+           { fs: 12, color: C.faint })
+  })
+  f.note(420, 44 + 6 * 34 + 6, '加一条：加一个数组元素', { fs: 12.5, color: C.mintInk })
+  await f.save('fig-06-if-vs-rules.svg')
+}
+
+// ── 图 08-1：四层包装（第 08 章）────────────────────────────
+{
+  const f = new Fig(760, '四层包装')
+  f.note(24, 30, '嵌套调用：顺序藏在括号里', { fs: 13.5, color: C.soft })
+  f.box(24, 44, 700, ['withRetry( withLog( withUndo( withDebounce( rawSave, 400 ) ) ) )'],
+        { fill: C.card, h: 52, center: true, mono: true, fs: 13.5, color: C.ink })
+  f.note(24, 112, '从里往外读才知道顺序，而且改一层要动整行', { fs: 12.5, color: C.red })
+
+  f.note(24, 156, '数组：顺序是数据', { fs: 13.5, color: C.soft })
+  const layers = [
+    ['withDebounce(.., 400)', '第 1 个执行', C.mintInk, C.mintBg],
+    ['withUndo(..)', '第 2 个', C.ink, C.card],
+    ['withLog(..)', '第 3 个 · 摘掉不影响行为', C.red, C.redBg],
+    ['withRetry(.., 1)', '第 4 个', C.ink, C.card],
+  ]
+  layers.forEach(([t, label, col, bg], i) => {
+    f.box(24, 170 + i * 42, 300, [t], { fill: bg, h: 34, pad: 8, mono: true, fs: 12.5, rx: 8, color: col })
+    f.note(344, 192 + i * 42, label, { fs: 12.5, color: col })
+  })
+  f.note(24, 170 + 4 * 42 + 8, '顺序可以单独断言，每一层可以单独讨论', { fs: 12.5, color: C.mintInk })
+  await f.save('fig-08-wrapping.svg')
+}
+
+// ── 图 10-1：三处 new 对一个组合根（第 10 章）────────────────
+{
+  const f = new Fig(760, '三处 new 对一个组合根')
+  f.note(24, 30, '散落的创建：三处各 new 一个', { fs: 13.5, color: C.soft })
+  ;[['main.ts', 44], ['settings-panel.ts', 104], ['export.ts', 164]].forEach(([t, y]) => {
+    f.box(24, y, 200, [t], { fill: C.card, h: 40, center: true, mono: true, fs: 13 })
+    f.arrow(224, y + 20, 268, y + 20)
+    f.box(268, y, 180, ['new LocalStorage…'], { fill: C.redBg, h: 40, center: true, mono: true, fs: 11.5, color: C.red })
+  })
+  f.note(24, 216, '配置会漂移，状态会分裂，测试换不掉', { fs: 12.5, color: C.red })
+
+  f.note(500, 30, '一个组合根', { fs: 13.5, color: C.soft })
+  f.box(500, 44, 230, ['main.ts'], { fill: C.mintBg, stroke: C.mint, h: 40, center: true, mono: true, fs: 13, color: C.mintInk })
+  f.arrow(615, 84, 615, 108)
+  f.box(500, 108, 230, ['new LocalNoteStore()'], { fill: C.mintBg, h: 38, center: true, mono: true, fs: 11.5, color: C.mintInk })
+  f.arrow(615, 146, 615, 170)
+  f.box(500, 170, 230, ['界面 / 设置 / 导出'], { fill: C.card, h: 40, center: true, fs: 13 })
+  f.note(500, 224, '只有这一处知道用的哪个实现', { fs: 12.5, color: C.mintInk })
+  await f.save('fig-10-composition-root.svg', 40)
+}
+
+// ── 图 11-1：两类改动（第 11 章）────────────────────────────
+{
+  const f = new Fig(760, '两类改动')
+  f.box(24, 30, 340, ['同类改动'], { fill: C.mintBg, h: 40, center: true, fs: 15, color: C.mintInk })
+  f.note(24, 84, '再加一个已有维度里的东西', { fs: 13, color: C.soft })
+  ;['加第五种语法', '加第四个导出格式', '加第三个存储实现'].forEach((t, i) => {
+    f.box(24, 106 + i * 44, 340, [t], { fill: '#FFFFFF', stroke: C.line, h: 36, pad: 9, fs: 13.5 })
+  })
+  f.box(24, 246, 340, ['应该只改一两个文件'], { fill: C.mintBg, h: 40, center: true, fs: 13.5, color: C.mintInk })
+  f.note(24, 302, '改到四个以上 → 那个维度缺一层抽象', { fs: 12.5, color: C.mintInk })
+
+  f.box(420, 30, 316, ['新维度'], { fill: C.card, h: 40, center: true, fs: 15, color: C.ink })
+  f.note(420, 84, '加一个以前没有的概念', { fs: 13, color: C.soft })
+  ;['加标签', '加搜索', '加图片'].forEach((t, i) => {
+    f.box(420, 106 + i * 44, 316, [t], { fill: '#FFFFFF', stroke: C.line, h: 36, pad: 9, fs: 13.5 })
+  })
+  f.box(420, 246, 316, ['穿过所有层是正常的'], { fill: C.card, h: 40, center: true, fs: 13.5, color: C.ink })
+  f.note(420, 302, '改六个文件也不用慌', { fs: 12.5, color: C.soft })
+  await f.save('fig-11-two-kinds-of-change.svg', 40)
 }

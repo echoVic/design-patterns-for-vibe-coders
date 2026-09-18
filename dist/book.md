@@ -797,6 +797,8 @@ export function renderWith(text: string, options: RenderOptions): string {
 }
 ```
 
+![左边是六个 if，顺序只存在于代码的行序里；右边是六条规则组成的数组，顺序就是数组顺序，每一项旁边标着它第几个执行。加一条语法在左边要在中间找位置插进去，在右边只是加一个数组元素。](../figures/fig-06-if-vs-rules.svg)
+
 同样三十行左右，输出逐字节一致。案例里有对照脚本，你可以自己验一遍：
 
 ```bash
@@ -1011,6 +1013,8 @@ const save = withRetry(withLog(withUndo(withDebounce(rawSave, 400))))
 和第 06 章那个 `if-else` 是同一个病：**顺序存在，但只存在于代码的形状里。**
 
 ## 用数组表达组合
+
+![上半是嵌套调用 withRetry(withLog(withUndo(withDebounce(rawSave))))，顺序藏在括号里；下半是同一个组合写成数组，每一层单独一行，日志那层标红因为它不改变行为。](../figures/fig-08-wrapping.svg)
 
 第 06 章的做法可以直接搬过来：
 
@@ -1238,6 +1242,8 @@ export function createSettingsPanel(service: NoteService) { /* ... */ }
 export function createExporter(service: NoteService) { /* ... */ }
 ```
 
+![左边是散落的创建：main.ts、settings-panel.ts、export.ts 三处各 new 一个 LocalStorageProvider；右边是组合根：只有 main.ts 创建一次，然后往外传。](../figures/fig-10-composition-root.svg)
+
 没有工厂，没有容器，没有注册表。**只有「谁负责创建」这一个决定被明确下来了。**
 
 这个模式有个名字叫组合根（composition root）：**整个程序里只有一个地方知道怎么把东西拼起来，其他地方只管用。** 名字可以忘，那个决定不能忘。
@@ -1341,6 +1347,8 @@ src/render/markdown-renderer.ts     渲染标签
 第二类：加一个新的维度。
 
 标签是「一条笔记可以有零到多个标记」，这是一个新维度。之前笔记只有正文和时间，它们都是单个值。
+
+![左栏是同类改动：加第五种语法、加第四个导出格式、加第三个存储实现，它们应该只改一两个文件，改到四个以上就说明那个维度缺一层抽象。右栏是新维度：加标签、加搜索、加图片，它们穿过所有层是正常的。](../figures/fig-11-two-kinds-of-change.svg)
 
 **同类改动应该便宜。新维度必然贵。**
 
