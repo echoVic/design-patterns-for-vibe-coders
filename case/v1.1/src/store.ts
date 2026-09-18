@@ -7,7 +7,10 @@ import type { Note, NoteDraft } from './types'
  * 它提供「拿到全部」和「追加一条」，不承诺同步，也不承诺一次写几条。
  */
 export interface NoteStore {
+  /** 读出全部笔记，按时间倒序。 */
   all(): Promise<Note[]>
+
+  /** 追加一条。 */
   append(note: Note): Promise<void>
 }
 
