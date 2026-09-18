@@ -402,7 +402,8 @@ note-factory.ts    note-repository.ts
 
 ![v0.2 的调用图：main.ts 调 note-service.ts，后者调 note-factory.ts 和 note-repository.ts，再往下是 storage-provider 接口和它唯一的实现。图右侧标出哪些节点是直通的。](../figures/fig-03-call-graph.svg)
 
-画完了。
+画完了。**注意这张图只画了「存一条笔记」这一条路。** `NoteRepository` 和 `NoteService` 各有两个方法，另一个（读）走的是另一条分支，图里省略了——下面判断哪些节点是直通的时候，要对两个方法都看一遍。
+
 
 这张图里有两种节点。`main.ts`、`note-service.ts`、`note-repository.ts`、`local-storage-provider.ts` 在调用链上；`note-factory.ts` 挂在旁边，是被持有的，只被调用一次。
 
@@ -2054,9 +2055,13 @@ src/main.ts           界面 + 组装
 
 ## 曲线是什么形状
 
-把整条路画出来：
+把上面那张表画成图：
 
-![三条曲线：v0.1 起点最低但涨得最快，最后穿过 v1.1；v0.2 起点就高而且几乎不降；v1.1 起点中等，最平。](../figures/fig-16-cost-curve.svg)
+![示意图，不是测量结果。三条线：v0.1 起点最低但涨得最快，最后穿过 v1.1；v0.2 起点就高而且几乎不降；v1.1 起点中等，最平。](../figures/fig-16-cost-curve.svg)
+
+**先说清楚：这张图是示意，不是测量。** 我实测的是上面那张表里的四个改动。这张曲线是把那四个点之间连起来，并且假设趋势大致如此。
+
+要真画出这张图，得在三个版本各实现十个功能、每个数一遍文件。**没做。** 所以它是帮你记住形状的，不是论据。
 
 `v0.1` 在功能少的时候最便宜，但它的成本随功能数增长得很快，因为每加一个维度，都要在那个文件里到处改。
 
