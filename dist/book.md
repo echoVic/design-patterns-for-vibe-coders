@@ -1418,13 +1418,13 @@ src/search.ts      新增
 
 拿速记应用试一遍：
 
-| 改动 | 类别 | v0.2 的文件数 |
+| 改动 | 类别 | 在 v0.2 上的文件数 |
 |---|---|---|
 | 加一个字段（`pinned`） | 新维度 | 3 |
 | 换存储到 `sessionStorage` | 同类，约束相同 | 1 |
 | 换存储到 IndexedDB | 同类，约束不同 | 4 |
 
-第三行是这份清单最有用的地方。「换存储」在分类上是同类，但 v0.2 那个接口是同步的，IndexedDB 一来，接口、实现、仓储、调用方四处全得改。
+第三行是这份清单最有用的地方。「换存储」在分类上是同类，但 v0.2 那个接口是同步的，IndexedDB 一来，接口、实现、仓储、调用方四处全得改。（第 04 章讲过这件事。）
 
 所以「同类」这个分类还不够细。要再问一句：新来的这个和旧的那个，约束一样吗？
 
@@ -1653,7 +1653,7 @@ function renderNoteList(notes: Note[], selectedId: string, env: Env, handlers: H
 
 两种处理方式，选一种。
 
-方式一，每个模块注册一次。 导出工厂函数，接受 env：
+**方式一，每个模块注册一次。** 导出工厂函数，接受 env：
 
 ```ts
 export function createExporter(env: Env) {
@@ -1664,22 +1664,24 @@ export function createExporter(env: Env) {
 }
 ```
 
-`env` 只在创建时传一次，之后被闭包接住（第 05 章那个函数工厂）。测试里传一个假的 env 进去就行，和换 store 是同一套做法。
+`env` 只在创建时传一次，之后被闭包接住（第 05 章那个函数工厂）。测试里传一个假的 env 进去就行。
 
-方式二，每个模块注册一次。模块导出工厂函数，接受 env：
+**方式二，模块级单例。** 在组合根（第 10 章那个地方）初始化一次，写进模块：
 
 ```ts
-export function createExporter(env: Env) {
-  return function exportNotes(notes: Note[]): string {
-    env.logger.info('开始导出')
-    // ...
-  }
+// env.ts
+export const env: Env = {
+  logger: console,
+  config: loadConfig(),
+  store: new LocalNoteStore(),
 }
 ```
 
-`env` 只在创建时传一次，之后被闭包接住（第 05 章那个函数工厂）。
+其他模块 `import { env } from './env'` 直接用，不经过参数。
 
-两种都可以。关键是环境只穿过一层，不跟着数据走三层。
+它比方式一短，代价是**测试时换不掉**。第 10 章反对单例就是因为这一点，这里同样成立——如果这个模块需要被单独测试，就别用它；如果它只是个把日志和配置拼起来的壳，用它没问题。
+
+**选哪个取决于你测不测这个模块。共同点是：环境只穿过一层，不跟着数据走三层。**
 
 ## 数据：必须传，没有捷径
 
@@ -2101,7 +2103,7 @@ const tags = (n.tags ?? []).map((t) => `<span class="tag">${t}</span>`).join('')
 
 这是第 00 章那个故事的翻版。那一章说 v0.2 在重构里弄丢了 `escapeHtml`，比 v0.1 更不安全。我在写 v1.1 的时候，注意力全在「把直通层拆掉、把接口改窄」上，标签这一路又漏了。
 
-我试了三个载荷（`<svg/onload>`、`<img src=x onerror>`、`<iframe src=javascript:>`），都注入了元素，但都没有触发脚本执行。所以准确的说法是 HTML 注入，不是「我做出了一个 XSS」。
+我试了三个载荷（`<svg/onload=...>`、`<img/src=x/onerror=...>`、`<iframe/src=javascript:...>`，都是不带空格、能整个被正则吃进去的写法），都注入了元素，但都没有触发脚本执行。所以准确的说法是 HTML 注入，不是「我做出了一个 XSS」。
 
 修法就是把已经有的那个 `escapeHtml` 用上：
 

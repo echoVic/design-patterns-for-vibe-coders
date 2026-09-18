@@ -7,7 +7,8 @@
     "dev": "vite",
     "v0.1": "vite --open /v0.1/",
     "v0.2": "vite --open /v0.2/",
-    "verify:v0.4": "cd v0.4 && esbuild verify.ts --bundle --outfile=verify.mjs --format=esm --platform=node && node verify.mjs && rm -f verify.mjs"
+    "verify:v0.4": "cd v0.4 && esbuild verify.ts --bundle --outfile=verify.mjs --format=esm --platform=node && node verify.mjs && rm -f verify.mjs",
+    "test:v1.1": "cd v1.1 && esbuild store.test.ts --bundle --outfile=store.test.mjs --format=esm --platform=node && node store.test.mjs && rm -f store.test.mjs"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
