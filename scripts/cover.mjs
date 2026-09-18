@@ -36,7 +36,7 @@ t(140, 680, '认出它 · 判断它 · 拆掉它', { fs: 26, fill: C.faint, ls: 
 // 底部
 t(140, 1430, '青雲老哥', { fs: 32, fill: C.ink })
 t(140, 1480, '17 章 + 2 附录', { fs: 24, fill: C.faint })
-t(140, 1520, '一个案例从 44 行长到 170 行，再被修剪', { fs: 24, fill: C.faint })
+t(140, 1520, '一个速记应用的演进：44 行 → 150 行 → 229 行', { fs: 24, fill: C.faint })
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <title>给 Vibe Coder 的设计模式</title>

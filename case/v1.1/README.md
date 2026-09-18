@@ -2,6 +2,8 @@
 
 第 16 章的终点状态。六个文件，比 v0.2 少一个，比 v0.1 多五个。
 
+**行数 222，比 v0.2 的 150 多。** 不是没拆干净——v0.2 多出来的是几层转发，v1.1 多出来的是渲染、标签和输入校验。
+
 ```
 src/types.ts     Note、NoteDraft
 src/store.ts     NoteStore 接口（由使用方定义）+ 两个实现 + createNote
@@ -9,7 +11,7 @@ src/tags.ts      标签解析
 src/render/rules.ts   六条规则，一个数组
 src/render/index.ts   渲染入口
 src/main.ts      界面 + 组装
-store.test.ts    存储测试（61 行，不算在 169 里）
+store.test.ts    存储测试（110 行，不算在 229 里）
 ```
 
 ## 和 v0.2 的关键差别

@@ -28,7 +28,7 @@ export const RULES = [
   { name: 'bold',       pattern: /\*\*(.+?)\*\*/g,      replacement: '<b>$1</b>' },
   { name: 'strike',     pattern: /~~(.+?)~~/g,          replacement: '<s>$1</s>' },
   { name: 'link',       pattern: /\[(.+?)\]\((.+?)\)/g, replacement: '<a href="$2">$1</a>' },
-  { name: 'quote',      pattern: /^> (.+)$/gm,          replacement: '<blockquote>$1</blockquote>' },
+  { name: 'quote',      pattern: /^&gt; (.+)$/gm,          replacement: '<blockquote>$1</blockquote>' },
   { name: 'list',       pattern: /^- (.+)$/gm,          replacement: '<li>$1</li>' },
 ] as const satisfies readonly Rule[]
 

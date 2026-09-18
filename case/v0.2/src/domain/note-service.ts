@@ -14,6 +14,7 @@ export class NoteService {
   }
 
   create(draft: NoteDraft): Note {
+    if (!draft.text.trim()) throw new EmptyNoteError()
     const note = this.factory.create(draft)
     this.repository.add(note)
     return note
