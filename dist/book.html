@@ -372,11 +372,27 @@ note-factory.ts    note-repository.ts
 </code></pre>
 <p>注释写得很清楚：<em>把存储实现挡在接口之后，将来换 IndexedDB 或远端同步时，上层不需要改动。</em></p>
 <p>它的设计意图就是等这一天。</p>
-<p>后来我把案例往回做，真的去加 IndexedDB。过程是这样的：</p>
-<p>先把 <code>LocalStorageProvider</code> 复制一份，改名 <code>IndexedDbProvider</code>，然后把里面四个方法体换掉。打开页面，全是 <code>undefined</code>。</p>
-<p>因为 IndexedDB 是异步的。它的读写返回 Promise，而接口声明的是同步方法。</p>
-<p><strong>这个接口唯一真正做的事，是把 localStorage 的同步特性固化了下来。</strong></p>
+<p>后来我真的去加 IndexedDB。做法很自然：把 <code>LocalStorageProvider</code> 复制一份，改名，把两个方法体换掉。</p>
+<pre><code class="language-ts">export class IndexedDbProvider implements StorageProvider {
+  load(): Note[] {
+    const request = indexedDB.open(&#39;jot&#39;, 1)
+    let notes: Note[] = []
+    request.onsuccess = () =&gt; {
+      const tx = request.result.transaction(&#39;notes&#39;, &#39;readonly&#39;)
+      const get = tx.objectStore(&#39;notes&#39;).getAll()
+      get.onsuccess = () =&gt; { notes = get.result as Note[] }
+    }
+    return notes
+  }
+  // save 同理
+}
+</code></pre>
+<p><strong>它通过了类型检查。</strong></p>
+<p>然后打开页面，「0 条」。</p>
+<p>因为 <code>load()</code> 在 <code>onsuccess</code> 跑之前就返回了。那个 <code>let notes = []</code> 是函数内的局部变量，回调把它填上时，函数早就返回了。调用方永远只拿到空数组。</p>
+<p>注意这件事的性质：<strong>它不报错。</strong> 不是抛异常，不是类型错误，是安安静静地返回一个空列表。应用看起来在正常工作，只是没有数据。</p>
 <p>我换实现失败，不是因为实现写得不好，是因为接口从一开始就没打算让我换。它是照着 localStorage 抄的。</p>
+<p><strong>这个接口唯一真正做的事，是把 localStorage 的同步特性固化了下来。</strong> 而且它固化得很成功：违反这个前提的实现不会被拦住，只会静默出错。</p>
 <h2>它抄了什么</h2>
 <p>把两个类型并排看：</p>
 <pre><code class="language-ts">interface StorageProvider {          class LocalStorageProvider {
@@ -385,7 +401,7 @@ note-factory.ts    note-repository.ts
 }                                    }
 </code></pre>
 <p>一模一样。</p>
-<p>这不是抽象，是<strong>改名</strong>。接口里没有任何一个东西是使用方需要的、而实现独有的。它就是实现类的方法签名誊了一遍，前面加了个 <code>interface</code> 关键字。</p>
+<p>这不是抽象，是改名。接口里没有任何一样东西是使用方提出的。它就是把实现类的方法签名誊了一遍，前面加了个 <code>interface</code> 关键字。</p>
 <p>一份誊本当然挡不住变化。它的形状来自被誊写的那个东西，所以被誊写的东西一变，誊本立刻失效。</p>
 <h2>如果由使用方来定，它会不一样</h2>
 <p><code>StorageProvider</code> 的消费者只有一个：<code>NoteRepository</code>。而 <code>NoteRepository</code> 真正需要的是什么？</p>
@@ -414,7 +430,7 @@ note-factory.ts    note-repository.ts
 <p>实操上有个简单的判断法：</p>
 <blockquote>
 <p>把接口的方法名和实现类的方法名并排列出来。</p>
-<p><strong>如果一一对应，那它就是誊本，不是抽象。</strong></p>
+<p>如果一一对应，那它就是誊本，不是抽象。</p>
 </blockquote>
 <p><code>StorageProvider</code> 和 <code>LocalStorageProvider</code> 就是这样：<code>load</code> 对 <code>load</code>，<code>save</code> 对 <code>save</code>。而 <code>NoteStore</code> 和两个实现都不对应——它比实现窄。</p>
 <h2>那什么时候该有它</h2>
