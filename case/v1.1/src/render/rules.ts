@@ -5,8 +5,6 @@
 export interface Rule {
   /** 规则名，同时也是开关名。 */
   readonly name: string
-  /** 界面上显示的名字。 */
-  readonly label: string
   readonly apply: (html: string) => string
 }
 
@@ -19,12 +17,12 @@ export const escapeHtml = (s: string): string =>
  * 顺序是行为的一部分：行内规则在前，块级在后。
  */
 export const rules = [
-  { name: 'inlineCode', label: '行内代码', apply: (h: string) => h.replace(/`(.+?)`/g, '<code>$1</code>') },
-  { name: 'bold',       label: '加粗',     apply: (h: string) => h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') },
-  { name: 'strike',     label: '删除线',   apply: (h: string) => h.replace(/~~(.+?)~~/g, '<s>$1</s>') },
-  { name: 'link',       label: '链接',     apply: (h: string) => h.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') },
-  { name: 'quote',      label: '引用',     apply: (h: string) => h.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>') },
-  { name: 'list',       label: '列表',     apply: (h: string) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
+  { name: 'inlineCode', apply: (h: string) => h.replace(/`(.+?)`/g, '<code>$1</code>') },
+  { name: 'bold',       apply: (h: string) => h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') },
+  { name: 'strike',     apply: (h: string) => h.replace(/~~(.+?)~~/g, '<s>$1</s>') },
+  { name: 'link',       apply: (h: string) => h.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') },
+  { name: 'quote',      apply: (h: string) => h.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>') },
+  { name: 'list',       apply: (h: string) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
 ] as const satisfies readonly Rule[]
 
 /** 开关名从表推导，不会再和规则表脱节。 */
