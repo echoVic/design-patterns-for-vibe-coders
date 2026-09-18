@@ -240,7 +240,7 @@ local-storage-provider.ts  save() 写 localStorage
 <p>这笔最隐蔽。</p>
 <p><code>v0.1</code> 里，<code>localStorage.setItem()</code> 就写在那儿。你一眼看到它在存东西，也一眼看到它是同步的。</p>
 <p><code>v0.2</code> 里，你看到的是 <code>this.storage.save(notes)</code>，声明为返回 <code>void</code>。你必须去读实现，才知道它是同步的。</p>
-<p>第 04 章那个换 IndexedDB 失败的故事，根子就在这儿：接口没告诉你任何实现细节，于是你以为换实现很容易——实际上接口悄悄固化了同步这个前提。</p>
+<p>第 04 章会讲一个换 IndexedDB 失败的故事，根子就在这儿：接口没告诉你任何实现细节，于是你以为换实现很容易——实际上接口悄悄固化了同步这个前提。</p>
 <p><strong>抽象隐藏的东西不是不存在，只是搬到了你需要的时候才去找。</strong></p>
 <h2>三笔加起来</h2>
 <table>
@@ -347,8 +347,8 @@ note-factory.ts    note-repository.ts
 <p>注意这个判断没有产生一个统一答案。两个节点，一个该删一个可以留，理由不一样。这是正常的——<strong>画图不是为了得到一个分数，是为了让你能一个节点一个节点地讨论。</strong></p>
 <h2>但有一类节点不能这样判断</h2>
 <p><code>storage-provider.ts</code> 在图上是个接口，它没有代码，只有签名。</p>
-<p>对接口不能问「它在做什么」，要问第 04 章那个问题：第二个实现什么时候来。</p>
-<p>以及更重要的：它给使用方留下的是什么样的假设。第 04 章那个接口只声明了同步方法，于是「存储是同步的」这个假设被固化进了整条调用链。</p>
+<p>对接口不能问「它在做什么」，要问第 00 章那句检查句：第二个实现什么时候来。</p>
+<p>以及更重要的：它给使用方留下的是什么样的假设。第 00 章那个接口只声明了同步方法，于是「存储是同步的」这个假设被固化进了整条调用链。</p>
 <p><strong>接口在图上不占地方，但它决定了所有实线箭头的形状。</strong> 这是画图时最容易忽略的一类节点。</p>
 <h2>这张图拿来干什么</h2>
 <p>三个用法。</p>
@@ -364,13 +364,13 @@ note-factory.ts    note-repository.ts
 <hr>
 <h1>这个接口只有一个实现</h1>
 <h2>我为它准备了这么久，它没帮上忙</h2>
-<p>第 00 章那份 <code>v0.2</code> 里有一个接口：</p>
+<p>第 00 章那份 <code>v0.2</code> 里有一个接口（下面是节选，去掉了注释）：</p>
 <pre><code class="language-ts">export interface StorageProvider {
   load(): Note[]
   save(notes: readonly Note[]): void
 }
 </code></pre>
-<p>注释写得很清楚：<em>把存储实现挡在接口之后，将来换 IndexedDB 或远端同步时，上层不需要改动。</em></p>
+<p>完整版里每个方法上都写了注释，接口自己的注释写着：把存储实现挡在接口之后，将来换 IndexedDB 或远端同步时，上层不需要改动。</p>
 <p>它的设计意图就是等这一天。</p>
 <p>后来我真的去加 IndexedDB。做法很自然：把 <code>LocalStorageProvider</code> 复制一份，改名，把两个方法体换掉。</p>
 <pre><code class="language-ts">export class IndexedDbProvider implements StorageProvider {
@@ -739,7 +739,7 @@ const middlewares: readonly ((next: Save) =&gt; Save)[] = [
 const save = middlewares.reduceRight((next, wrap) =&gt; wrap(next), rawSave)
 </code></pre>
 <p><code>reduceRight</code> 从右往左套，所以数组第一个元素是最先执行的。顺序从括号形状变成了数组顺序。</p>
-<p>好处和上一章一样，但这次更明显：这四层的顺序现在是一个可以单独测试的东西。你可以写一个断言，说「防抖必须在撤销之前」，而这条断言在嵌套版本里写不出来。</p>
+<p>好处和第 06 章那次一样，但这次更明显：这四层的顺序现在是一个可以单独测试的东西。你可以写一个断言，说「防抖必须在撤销之前」，而这条断言在嵌套版本里写不出来。</p>
 <p>如果嫌 <code>reduceRight</code> 绕，也可以把数组定义成从外到内，配一行注释说明。关键是顺序有一个统一的表达，而不是散在括号里。</p>
 <h2>哪一层不该有</h2>
 <p>现在回答第二个问题。</p>
