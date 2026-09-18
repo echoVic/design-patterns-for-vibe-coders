@@ -90,7 +90,7 @@ export function renderWith(text: string, options: RenderOptions): string {
 
 ![左边是六个 if，顺序只存在于代码的行序里；右边是六条规则组成的数组，顺序就是数组顺序，每一项旁边标着它第几个执行。加一条语法在左边要在中间找位置插进去，在右边只是加一个数组元素。](figures/fig-06-if-vs-rules.svg)
 
-同样三十行左右，输出逐字节一致。案例里有对照脚本，你可以自己验一遍：
+这一版的核心是 62 行的那个量级（一份规则表加一个渲染函数），输出和它逐字节一致。案例里有对照脚本，你可以自己验一遍：
 
 ```bash
 cd case && npm install && npm run verify:v0.4
