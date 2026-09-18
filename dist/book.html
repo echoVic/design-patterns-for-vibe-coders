@@ -112,7 +112,7 @@ src/main.ts                             界面
 <p>所以判断一次重构好不好，不能只看它加了多少抽象，还要看它有没有弄丢什么。</p>
 <h2>为什么 AI 会长成这样</h2>
 <p>这不是模型笨。</p>
-<p>设计模式这套分类是 1994 年总结出来的，例子取的是 C++ 和 Smalltalk。在那两门语言里，<strong>把一段行为交出去，惯常写法就是包成一个对象</strong>——C++ 的函数指针带不了状态，写法也啰嗦；Smalltalk 其实有 block，但书里选的是对象那种表达。</p>
+<p>设计模式这套分类是 1994 年总结出来的，例子取的是 C++ 和 Smalltalk。在那两门语言里，<strong>把一段行为交出去，惯常写法就是包成一个对象</strong>：C++ 想传一段带状态的行为，标准做法是写一个函数对象（重载了调用运算符的类）；Smalltalk 其实早就有 block，但书里选的是对象那种表达。</p>
 <p>第二年 Java 发布，很快成了教这门课的主流语言。类、接口、继承都是它的基本语法，那套写法也就跟着固定下来。三十年积累的教材、博客、开源项目、面试题，全是那个形状。模型从这里面学，出来的自然是那个形状。</p>
 <p>换到 TypeScript，情况变了。函数是一等公民，模块天生就是单例，对象可以随时加方法。教材里需要四个类才能表达的东西，现在一个函数参数就够了。</p>
 <p><strong>同一个职责分配，两种长相。</strong></p>
@@ -219,9 +219,9 @@ local-storage-provider.ts  save() 写 localStorage
 <hr>
 <h1>抽象的三笔开销</h1>
 <h2>抽象不是免费的</h2>
-<p>上一章量了三个数：操作数、层数、跳转次数。这一章说它们能换来什么，以及要付出什么。</p>
+<p>上一章量了三个数：操作数、层数、要打开几个文件。这一章说它们能换来什么，以及要付出什么。</p>
 <p>先说结论：<strong>抽象的开销不在代码行数上。</strong></p>
-<p><code>v0.1</code> 是 44 行，<code>v0.2</code> 是 149 行。行数差了 3.4 倍，但这个数字几乎不影响你。多出来的 105 行你不用背，也不用维护。</p>
+<p><code>v0.1</code> 是 44 行，<code>v0.2</code> 是 149 行。行数差了 3.4 倍，但这个倍数本身不说明问题——多出来那 105 行你既不用背，读的时候也可以跳过去。真正要付的代价在别处。</p>
 <p>真正影响你的是另外三样。</p>
 <h2>第一笔：跳转</h2>
 <p>要理解一段逻辑，你得在文件之间移动。每一次移动都有成本——打开、定位、记住刚才看到的东西。</p>
@@ -232,7 +232,7 @@ local-storage-provider.ts  save() 写 localStorage
 <p>「加一个字段」在 v0.1 里改一处，在 v0.2 里改三处。</p>
 <p>抽象在这里做了一笔交换：它把某些改动集中了，把另一些改动分散了。</p>
 <ul>
-<li>换存储方式：v0.2 只改一个文件，v0.1 要改散落各处的 <code>localStorage</code> 调用</li>
+<li>换存储方式（换一个同样是同步的键值存储）：v0.2 只改一个文件，v0.1 要改散落各处的 <code>localStorage</code> 调用</li>
 <li>加一个笔记字段：v0.2 要经手三个文件，v0.1 只改一处</li>
 </ul>
 <p><strong>所以「抽象让改动更容易」这句话缺了主语。</strong> 它让哪一类改动更容易？</p>
@@ -263,7 +263,7 @@ local-storage-provider.ts  save() 写 localStorage
 <td>3</td>
 </tr>
 <tr>
-<td>换存储方式要改几个文件</td>
+<td>换存储方式（约束相同）</td>
 <td>多</td>
 <td>1</td>
 </tr>
@@ -274,6 +274,7 @@ local-storage-provider.ts  save() 写 localStorage
 </tr>
 </tbody></table>
 <p>看最后一行。这里要说句公道话：v0.1 也有隐藏前提，而且更裸。</p>
+<p>（表里「换存储」那一格说的都是<strong>约束不变</strong>的情况。如果新实现和旧实现的约束不同（比如同步换异步），v0.2 那个接口就废了，要改四处。这是第 04 章和最后一张表的事。）</p>
 <p>它顶层直接 <code>JSON.parse(localStorage.getItem(KEY) ?? &#39;[]&#39;)</code>，<code>setItem</code> 也没包 try。它的前提是「存储永远可写、存进去的内容永远合法」——隐私模式或者数据被改坏的时候，它直接崩。</p>
 <p>两个版本的差别不是「有没有前提」，是前提写在哪：<strong>v0.1 的前提就写在那一行代码里，你读到就看见了；v0.2 的前提藏在接口的签名里（同步），要对着第二个实现才看得出来。</strong></p>
 <p>这也是为什么第 00 章那个 44 行的版本不是「不专业」，而是它把复杂度放对了地方：两个操作的速记应用，不需要为「将来可能换存储」预付成本。</p>
@@ -929,7 +930,7 @@ export function createExporter(service: NoteService) { /* ... */ }
 <h1>加一个功能，要动几个文件</h1>
 <h2>我想加搜索</h2>
 <p>我想给速记加搜索。</p>
-<p>改完之后，<code>git diff</code> 里是两个改动加一个新增：</p>
+<p>为了拿到真实数字，我真的在 v1.1 上做了一遍这个改动，数完又撤掉了——<strong>它不在 <code>case/</code> 里</strong>。改动是两个文件加一个新增：</p>
 <pre><code class="language-text">src/main.ts        2 处：读搜索框的值，渲染前先过滤
 index.html         1 处：加一个输入框
 src/search.ts      新增
@@ -1104,13 +1105,15 @@ readWithToast(&#39;读取笔记&#39;, () =&gt; storage.load())
 <hr>
 <h1>谁都需要那个对象</h1>
 <h2>三个参数，传了三层</h2>
-<p>加了搜索之后，渲染拆成了三层。三个类型先说明一下：</p>
+<p>这一章的情况<strong>案例里还没有</strong>——v1.1 的渲染在一个函数里，没有拆分，也就没有参数透传的问题。</p>
+<p>它讲的是<strong>这个应用再长一截之后会发生的事</strong>：有了设置面板、导出、统计三个模块，渲染会自然拆开，那时候参数就会往下传。所以在读这一章的时候，把下面的代码当成「照这个趋势长下去的样子」，不是现状。</p>
+<p>三个类型先说明一下：</p>
 <ul>
 <li><code>AppState</code>：当前界面的状态（有哪些笔记、选中哪条、搜索词是什么）</li>
 <li><code>Env</code>：环境，「整个程序里同一个」的那些东西（日志器、配置、存储客户端）</li>
 <li><code>Handlers</code>：回调（点笔记、删笔记该做什么）</li>
 </ul>
-<p>为了让搜索词能传到底，渲染链路变成了这样：</p>
+<p>拆分之后，渲染链路会变成这样：</p>
 <pre><code class="language-ts">function renderApp(state: AppState, env: Env, handlers: Handlers) {
   renderSidebar(state, env, handlers)
 }
@@ -1386,11 +1389,11 @@ render()
 <p>那条边界是真的，只是不需要用一个类来表达。它可以是 <code>NoteStore</code> 这个接口（也就是改好形状之后的 <code>StorageProvider</code>）的边界。层数减了，边界还在。</p>
 <h2>v1.1 长什么样</h2>
 <p>删完之后大概是这样：</p>
-<pre><code class="language-text">src/types.ts          Note、NoteTag
-src/store.ts          NoteStore 接口（由使用方定义）+ 本地实现
+<pre><code class="language-text">src/types.ts          Note、NoteDraft
+src/store.ts          NoteStore 接口（由使用方定义）+ 两个实现 + createNote
+src/tags.ts           标签解析
 src/render/rules.ts   六条渲染规则，一个数组
 src/render/index.ts   渲染入口
-src/tags.ts           标签解析
 src/main.ts           界面 + 组装
 </code></pre>
 <p>六个文件，比 v0.2 少一个，比 v0.1 多五个。</p>
@@ -1444,7 +1447,8 @@ src/main.ts           界面 + 组装
 <p><code>v1.1</code> 的起点比 v0.1 高一点（多五个文件），但它的曲线是平的。</p>
 <p><strong>抽象买的就是这条曲线的斜率。</strong> 你付一次性的建立成本，换的是「以后每次加功能都便宜一点」。</p>
 <p>所以判断一个抽象值不值，等价于问：它让你的曲线变平了吗？</p>
-<p><code>StorageProvider</code>（誊本版）没让曲线变平，因为换存储这个改动你根本不常做，而它把常做的改动推高了。改好形状之后，它同时压平了「换存储」和「加字段」两类。</p>
+<p><code>StorageProvider</code>（誊本版）没让曲线变平：换存储这个改动你根本不常做，而它把常做的改动推高了。改好形状之后，换存储从四处降到一处。</p>
+<p><strong>但「加字段」那一类它没压下来</strong>——两边都是三处。因为加字段的路径本来就不经过存储层，它经过的是类型、创建、界面。<strong>一个抽象只能压平它自己那条路径上的改动。</strong></p>
 <p><code>NoteFactory</code> 没让任何一类变动平。</p>
 <h2>终点版自己也留了个洞</h2>
 <p>写完 v1.1 我在浏览器里试了一件事。</p>
