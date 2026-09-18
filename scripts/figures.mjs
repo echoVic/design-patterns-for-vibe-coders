@@ -240,3 +240,34 @@ await mkdir(OUT, { recursive: true })
   f.note(420, 302, '改六个文件也不用慌', { fs: 12.5, color: C.soft })
   await f.save('fig-11-two-kinds-of-change.svg', 40)
 }
+
+// ── 图 14-1：四步判断流程（第 14 章）────────────────────────
+{
+  const f = new Fig(760, '四步判断流程')
+  const W = 470, X = 160
+  let y = 24
+  const step = (n, title, body, fill = C.card, border = 'none', color = C.ink) => {
+    const h = f.box(X, y, W, [title, body], { fill, stroke: border, pad: 13, fs: 15, rx: 10, colors: [color, C.soft] })
+    f.note(X - 14, y + 26, n, { fs: 13, color: C.faint, anchor: 'end', mono: true })
+    y += h
+    return h
+  }
+  const arrow = (label) => {
+    f.arrow(X + W / 2, y + 2, X + W / 2, y + 26)
+    if (label) f.note(X + W / 2 + 12, y + 20, label, { fs: 12, color: C.faint })
+    y += 34
+  }
+
+  step('1', '先证明它贵', '挑一个最近真做过的改动，数它碰了几个文件')
+  arrow()
+  step('2', '看它服务几个消费者', '一个，而且和实现一一对应 → 候选；两个以上 → 留', C.mintBg, 'none', C.mintInk)
+  arrow()
+  step('3', '抽出来看参数', '参数干净 → 真重复；全是开关 → 假重复，拆回去')
+  arrow()
+  step('4', '列同类改动的清单', '同类改动要改四个以上文件 → 缺一层抽象', C.mintBg, 'none', C.mintInk)
+  arrow()
+  f.box(X, y, W, ['把抽象放到有消费者的地方'], { fill: C.ink, pad: 15, fs: 16, rx: 10, center: true, color: '#FFFFFF' })
+  y += 52
+  f.note(X - 14, y, '不是删到最少', { fs: 12.5, color: C.faint, anchor: 'end' })
+  await f.save('fig-14-decision.svg', 36)
+}
