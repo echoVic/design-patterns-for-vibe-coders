@@ -33,3 +33,40 @@ body { color: var(--label) }   /* 在 body 上求值 */
 `.wrap` 规则提前闭合，游离的 `}` 把紧随的 `.nav` 规则整个吃掉，导航栏失去 `display:flex`，图标竖着堆到左上角。
 
 症状（图标跑位）和病因（前面两个规则的括号）隔得很远。改完 CSS 要数一遍 `{` 和 `}`。
+
+## ③ 独立 SVG 是 XML，内联预览看不出的错误
+
+生成插图的脚本里写了：
+
+```js
+const FONT = '-apple-system,"SF Pro Text","PingFang SC",...'
+```
+
+然后：
+
+```js
+font-family="${FONT}"     // ← 双引号属性里塞了带双引号的字体名
+```
+
+**HTML 解析器遇到这种情况会宽容地恢复，XML 直接报错。**
+
+我把插图内联进一个临时 HTML 页面预览，七张图看起来都正常，于是以为没问题。等到把它们作为独立 `.svg` 文件加载时，浏览器报：
+
+```
+This page contains the following errors:
+error on line 6 at column 197: attribute ...
+```
+
+修法：含引号的值一律用**单引号包裹属性**。
+
+```js
+font-family='${FONT}'     // XML 合法
+```
+
+**更重要的教训：预览方式必须和交付方式一致。** 内联进 HTML 预览，验证的是"HTML 解析器能读出什么"；作为独立文件交付，走的是 XML 解析。两者容错程度不同，前者会掩盖后者的错误。
+
+自查一行：
+
+```bash
+python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse(sys.argv[1])" figures/*.svg
+```

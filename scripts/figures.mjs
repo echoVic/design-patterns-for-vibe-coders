@@ -41,7 +41,7 @@ class Fig {
       const ly = y + pad + i * fs * LH + fs * 0.78
       const x0 = o.center ? x + w / 2 : x + pad
       const anchor = o.center ? 'middle' : 'start'
-      const cls = o.mono ? ` font-family="${MONO}"` : ''
+      const cls = o.mono ? ` font-family='${MONO}'` : ''
       const col = (o.colors && o.colors[i]) ?? o.color ?? C.ink
       this.body.push(`<text x="${x0.toFixed(0)}" y="${ly.toFixed(0)}" font-size="${fs}" fill="${col}" text-anchor="${anchor}"${cls}>${l}</text>`)
     })
@@ -50,7 +50,7 @@ class Fig {
   }
   note(x, y, text, o = {}) {
     const fs = o.fs ?? 13
-    this.body.push(`<text x="${x}" y="${y}" font-size="${fs}" fill="${o.color ?? C.soft}" text-anchor="${o.anchor ?? 'start'}" font-family="${o.mono ? MONO : FONT}">${text}</text>`)
+    this.body.push(`<text x="${x}" y="${y}" font-size="${fs}" fill="${o.color ?? C.soft}" text-anchor="${o.anchor ?? 'start'}" font-family='${o.mono ? MONO : FONT}'>${text}</text>`)
     this.maxY = Math.max(this.maxY, y + fs * 0.5)
     return y + fs * LH
   }

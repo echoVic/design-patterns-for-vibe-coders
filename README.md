@@ -16,7 +16,7 @@ AI 会写代码，但不会判断结构值不值。
 
 ## 怎么读
 
-**完整读一遍**：`dist/book.md`，三小时左右。
+**完整读一遍**：`dist/book.html`（浏览器打开，图正常渲染）或 `dist/book.md`，三小时左右。
 
 **按章读**：目录在 [CHAPTERS.md](CHAPTERS.md)。核心是第 04–13 章，其余是外壳。
 
@@ -54,17 +54,26 @@ cd case && npm install && npm run dev
 
 ```
 manuscripts/   各章 markdown
+figures/       7 张插图（手写 SVG）
 case/          贯穿案例，v0.1 → v1.1
-design/        视觉基准（案例应用的界面）
+design/        视觉基准 + 插图的两条踩坑记录
 notes/         早期探索留下的发现
-scripts/       拼书脚本
-dist/book.md   拼好的整本
+scripts/       插图生成、拼书、HTML 构建
+dist/          book.md / book.html
 ```
 
 下一步：逐章校对、补图表、决定发布形式。
 
-## 重新生成整本
+## 重新生成
 
 ```bash
-node scripts/build-book.mjs
+node scripts/figures.mjs      # 插图
+node scripts/build-book.mjs   # dist/book.md
+node scripts/build-html.mjs   # dist/book.html
+```
+
+`figures.mjs` 里所有尺寸都由布局推导，不手填。改完插图记得验一遍 XML 合法性：
+
+```bash
+python3 -c "import xml.dom.minidom,sys;[xml.dom.minidom.parse(f) for f in sys.argv[1:]]" figures/*.svg
 ```
