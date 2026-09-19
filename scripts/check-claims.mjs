@@ -76,7 +76,7 @@ for (const d of docs) {
     }
     await walk(d)
   }
-  const known = [versions['v0.2'].lines - versions['v0.1'].lines, testLines, ...perFile, 107, 62, 39, 23, 12, 95, 18, 21, 55]
+  const known = [versions['v0.2'].lines - versions['v0.1'].lines, testLines, ...perFile, 187, 80, 107, 23, 54, 26, 12, 95, 18, 21, 55]
     if (hits.length === 0 && !known.includes(n)) {
       const key = `${d}:${n}`
       if (!seen.has(key)) { seen.add(key); console.log(`  ✗ ${d.replace(root + '/', '')} 说「${n} 行」，没有哪个版本是这个数`); bad++ }

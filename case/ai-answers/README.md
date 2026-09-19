@@ -74,3 +74,18 @@ destroy() { this.#syntaxElements.clear() }                          // 清
 第 07 章请读者对着那 1186 行挑「哪几行今天用得上」，这就是答案之一。
 
 **没有删掉它**——这份文件是那次实验的原件，改了就不是 AI 当时给的东西了。
+
+
+## 改过什么（和 AI 当时给的对比）
+
+`branch-refactor/` 里那四个文件**不是 AI 原样**——后来修过三个 bug。原样保存在 `branch-refactor/as-generated/`。
+
+| | AI 给的 | 现在 | 为什么改 |
+|---|---|---|---|
+| 引用 | `pattern: /^> (.+)$/gm` | `/^&gt; (.+)$/gm` | `render` 先转义，`>` 已经变成 `&gt;`，原正则永远匹配不上 |
+| 链接 | `replacement: '<a href="$2">$1</a>'` | 用 `apply` 转义引号 + 只放行 http(s) | 属性上下文里 `"` 能闭合 `href` 注入别的属性 |
+| 列表 | `replacement: '<li>$1</li>'` | 用 `apply` 包一层 `<ul>` | 裸 `<li>` 不是合法列表 |
+
+改完的版本必须和 `case/v0.4/src/render/branches.ts` 输出一致——`npm run test:parity` 验这一点。
+
+**注意：行数因此从 169 变成 187。** 第 06 章用的数字是改完之后的（80 行核心 + 107 行入口和验证脚本）。
