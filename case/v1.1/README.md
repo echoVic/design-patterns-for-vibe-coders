@@ -11,7 +11,7 @@ src/tags.ts      标签解析
 src/render/rules.ts   六条规则，一个数组
 src/render/index.ts   渲染入口
 src/main.ts      界面 + 组装
-store.test.ts    存储测试（110 行，不算在 229 里）
+store.test.ts    存储测试（110 行，不算在 237 里）
 ```
 
 ## 和 v0.2 的关键差别

@@ -24,7 +24,7 @@ AI 会写代码，但不会判断结构值不值。
 
 **只想拿结论**：附录 B 是一页检查清单，可以打印出来贴在显示器上（PDF 版每章另起一页、附录 B 排在单独一页两栏里，直接打那一页就行）。
 
-**想自己验一遍**：`case/` 下有五个版本，从 44 行到 229 行，对应书里的几个关键节点。跑起来：
+**想自己验一遍**：`case/` 下有五个版本，对应书里的几个关键节点。跑起来：
 
 ```bash
 cd case && npm install && npm run dev
@@ -46,7 +46,7 @@ cd case && npm install && npm run dev
 
 ## 贯穿全书的案例
 
-一本速记应用。它从「打开就能写」的 44 行开始，被 AI 重构到 150 行七个文件，最后被重组成 229 行六个文件。**行数比中间那版还多——因为终点多了渲染、标签和输入校验，而中间那版多出来的只是几层转发。**
+一本速记应用。它从「打开就能写」的 44 行开始，被 AI 重构到 150 行七个文件，最后被重组成 237 行六个文件。**行数比中间那版还多——因为终点多了渲染、标签和输入校验，而中间那版多出来的只是几层转发。**
 
 读者能看着抽象从无到有、从有到滥、最后被放到该放的地方。这是按模式分类的书做不到的，它们的例子永远停在「设计得刚刚好」的那一刻。
 
@@ -62,7 +62,7 @@ figures/       封面 + 8 张插图（手写 SVG）
 case/          贯穿案例，v0.1 → v1.1
 design/        视觉基准 + 插图的两条踩坑记录
 notes/         早期探索留下的发现
-scripts/       插图生成、拼书、HTML 构建、断言检查
+scripts/       插图 / 封面 / 拼书 / HTML / PDF / 断言检查 / 一键构建
 dist/          book.md / book.html / book.pdf
 ```
 
@@ -75,6 +75,12 @@ dist/          book.md / book.html / book.pdf
 ## 重新生成
 
 ```bash
+node scripts/build-all.mjs    # 全部重来一遍（推荐）
+```
+
+也可以单跑某一步：
+
+```bash
 node scripts/figures.mjs      # 8 张插图
 node scripts/cover.mjs        # 封面
 node scripts/build-book.mjs   # dist/book.md
@@ -82,6 +88,8 @@ node scripts/build-html.mjs   # dist/book.html（含目录、锚点、打印样�
 node scripts/build-pdf.mjs    # dist/book.pdf（用系统里的 Chrome，无额外依赖）
 node scripts/check-claims.mjs # 核对书里的数字断言
 ```
+
+**注意顺序：PDF 是从 `dist/book.html` 打的。** 改了正文只跑 `build-pdf.mjs` 会打出一份旧的——`build-all.mjs` 就是为这件事准备的。
 
 **改完案例代码一定要跑最后一条。** 书里引用了各版本的行数，代码一改就会漂移，而且不会有任何报错——只有读者去数才发现。
 
