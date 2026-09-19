@@ -1222,28 +1222,29 @@ readWithToast(&#39;读取笔记&#39;, () =&gt; storage.load())
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 谁都需要那个对象</nav>
 <h1 id="ch13">谁都需要那个对象</h1>
 <h2>三个参数，传了三层</h2>
-<p>这一章的情况案例里还没有——v1.1 的渲染在一个函数里，没有拆分，也就没有参数透传的问题。</p>
-<p>它讲的是这个应用再长一截之后会发生的事：有了设置面板、导出、统计三个模块，渲染会自然拆开，那时候参数就会往下传。所以在读这一章的时候，把下面的代码当成「照这个趋势长下去的样子」，不是现状。</p>
-<p>三个类型先说明一下：</p>
+<p>这一章的情况 <code>v1.1</code> 里没有：它的渲染在一个函数里，没有拆开，也就没有参数往下传的问题。</p>
+<p>所以我把它放大试了一次：照着「这个应用再长一截」的样子，加了设置面板、导出、统计三个模块，渲染拆成三层。写完量了一遍，然后把代码从版本里撤掉了（留在 <code>case/measurements/</code>，不进 <code>v0.1</code> 到 <code>v1.1</code> 那条线）。</p>
+<p>下面是量出来的东西。三个类型先说明一下：</p>
 <ul>
-<li><code>AppState</code>：当前界面的状态（有哪些笔记、选中哪条、搜索词是什么）</li>
-<li><code>Env</code>：环境，「整个程序里同一个」的那些东西（日志器、配置、存储客户端）</li>
+<li><code>AppState</code>：当前界面的状态（有哪些笔记、选中哪条）</li>
+<li><code>Env</code>：环境，「整个程序里同一个」的那些东西（日志器、渲染配置、存储客户端）</li>
 <li><code>Handlers</code>：回调（点笔记、删笔记该做什么）</li>
 </ul>
-<p>拆分之后，渲染链路会变成这样：</p>
+<p>拆成三层之后，渲染链路长这样：</p>
 <pre><code class="language-ts">function renderApp(state: AppState, env: Env, handlers: Handlers) {
-  renderSidebar(state, env, handlers)
+  return renderSidebar(state, env, handlers) + renderSettings(env, handlers)
 }
 
 function renderSidebar(state: AppState, env: Env, handlers: Handlers) {
-  renderNoteList(state.notes, state.selectedId, env, handlers)
+  return renderNoteList(state.notes, state.selectedId, env, handlers)
 }
 
 function renderNoteList(notes: Note[], selectedId: string, env: Env, handlers: Handlers) {
-  // 终于用到 env.logger 了
+  return notes.map((n) =&gt; render(n.text, env.renderOptions)).join(&#39;&#39;)
 }
 </code></pre>
-<p><code>env</code> 从最外面传到第三层，中间那层碰都没碰它。</p>
+<p><strong>中间那层 <code>renderSidebar</code> 的函数体里，<code>env</code> 的字段一次都没被读过。</strong> 它只做一件事：从 <code>state</code> 里取出两个字段，再把 <code>env</code> 和 <code>handlers</code> 原样递给下一层。</p>
+<p>整条链量下来：<code>env</code> 的字段被真正用到 3 次，被「只是往下搬」6 次。<strong>搬运是用它的两倍。</strong></p>
 <p>这种写法一般叫参数透传（prop drilling），通常被当成坏味道。处理办法也很多：全局变量、单例、依赖注入容器、React 的 Context。</p>
 <p>但先别急着选。透传只是症状，它背后可能是三种完全不同的病。</p>
 <h2>先分清环境和数据</h2>
@@ -1263,6 +1264,42 @@ function renderNoteList(notes: Note[], selectedId: string, env: Env, handlers: H
 }
 </code></pre>
 <p><code>env</code> 只在创建时传一次，之后被闭包接住（第 05 章那个函数工厂）。测试里传一个假的 env 进去就行。</p>
+<p>这一改省掉了多少？我照这个写法把刚才那版重写了一遍，同样的功能，只换环境的进法：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>一路传</th>
+<th>注入一次</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中间层 <code>renderSidebar</code> 的签名</td>
+<td><code>(state, env, handlers)</code></td>
+<td><code>(state, handlers)</code></td>
+</tr>
+<tr>
+<td>它的函数体里读 <code>env</code> 字段</td>
+<td>0 次</td>
+<td>——</td>
+</tr>
+<tr>
+<td>渲染链路上带 <code>env</code> 参数的函数</td>
+<td>4 个</td>
+<td>2 个，且都只在创建时传</td>
+</tr>
+<tr>
+<td><code>env</code> 字段被用到</td>
+<td>3 次</td>
+<td>3 次</td>
+</tr>
+<tr>
+<td><code>env</code> 只是被往下搬</td>
+<td>6 次</td>
+<td>3 次</td>
+</tr>
+</tbody></table>
+<p>用到的次数没变，搬运从 6 次降到 3 次。中间那一层不再需要为一个它不用的东西负责。</p>
 <p><strong>方式二，模块级单例。</strong> 在组合根（第 10 章那个地方）初始化一次，写进模块：</p>
 <pre><code class="language-ts">// env.ts
 export const env = {
@@ -1273,7 +1310,7 @@ export const env = {
 <p>其他模块 <code>import { env } from &#39;./env&#39;</code> 直接用，不经过参数。</p>
 <p>注意这个例子里没有 store。 第 10 章说过，谁创建存储要有唯一的决定点，那就是组合根。把它塞进 <code>env.ts</code>，等于在模块顶层又造了一个实例。</p>
 <p>方式二比方式一短，代价是测试时换不掉。第 10 章反对单例就是因为这一点，这里同样成立——如果这个模块需要被单独测试，就别用它；如果它只是个把日志和配置拼起来的壳，用它没问题。</p>
-<p><strong>选哪个取决于你测不测这个模块。共同点是：环境只穿过一层，不跟着数据走三层。</strong></p>
+<p>选哪个取决于你测不测这个模块。共同点是：环境只穿过一层，不跟着数据走三层。</p>
 <h2>数据：必须传，没有捷径</h2>
 <p><code>notes</code>、<code>selectedId</code> 属于数据。它们不能用上面两种方式处理。</p>
 <p>为什么？因为「当前的选中项」是一个会变的值。你把它放进全局，就回到了第 09 章那个问题：同一个事实存在了多份，或者存在了一个没有主人的地方。</p>
@@ -1296,7 +1333,7 @@ export const env = {
 <p>第一，透传的是环境还是数据？环境用注入解决，数据继续往下问。</p>
 <p>第二，中间那几层真的需要存在吗？如果它们只是转发参数，那是第 03 章讲的「直通节点」，可以去掉了。</p>
 <p>第三，如果中间层确实要做别的事，那它是不是承担了太多？一个函数既要组织结构，又要往下传三样东西，说明它管的事太多了——这又回到第 07 章那个「参数多说明它在管很多事」。</p>
-<p><strong>只有在三个问题都问完、确实无解的时候，才考虑引入一个跨层的取用机制。</strong> 那个机制的代价是：依赖关系从函数签名里消失了，你不再能通过读一个函数的参数知道它依赖什么。</p>
+<p>只有在三个问题都问完、确实无解的时候，才考虑引入一个跨层的取用机制。 那个机制的代价是：依赖关系从函数签名里消失了，你不再能通过读一个函数的参数知道它依赖什么。</p>
 <h2>谬误与陷阱</h2>
 <p>参数超过三个就该用一个 options 对象？这能少打几个字，但不能解决透传。<code>renderSidebar(options)</code> 里那个 <code>options</code> 还是装着两个它不需要的字段，而且从签名上你已经看不出它不需要了。第 07 章那个分组方法是给「一起变的东西」用的，不是给「一起传的东西」用的。</p>
 <p>用全局变量最快？对数据用全局是最快，也最快失控。它把「谁改了它」这个问题变得无法回答。</p>

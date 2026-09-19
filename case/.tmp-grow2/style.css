@@ -1,0 +1,43 @@
+/* 案例共用的样式。取自 design/note-app.html 那套 Apple 语义色。 */
+:root{
+  --bg:#F2F2F7; --card:#FFFFFF; --label:#000;
+  --label2:rgba(60,60,67,.60); --label3:rgba(60,60,67,.30);
+  --sep:rgba(60,60,67,.16);
+  --mint:#00C7BE; --mint-ink:#00A69E; --mint-bg:rgba(0,199,190,.10);
+  --sans:-apple-system,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--label);font-family:var(--sans);line-height:1.7}
+main{max-width:600px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:34px;font-weight:700;letter-spacing:-.026em;margin:0 0 6px}
+.count{font-size:13px;color:var(--label3);margin-bottom:22px;
+       font-variant-numeric:tabular-nums}
+#input{width:100%;border:0;border-radius:14px;padding:15px 16px;font:inherit;
+       font-size:16.5px;min-height:54px;resize:none;outline:none;color:var(--label);
+       background:var(--card);
+       background-image:linear-gradient(rgba(0,199,190,.055),rgba(0,199,190,.055))}
+#input::placeholder{color:var(--label3)}
+.note{background:var(--card);border-radius:14px;padding:14px 16px;margin-top:10px;
+      font-size:15.5px;line-height:1.72;position:relative}
+.note time{float:right;font-size:12.5px;color:var(--label3);font-weight:500;
+           font-variant-numeric:tabular-nums}
+.note code{font-family:var(--mono);font-size:13px;color:var(--mint-ink);
+           background:var(--mint-bg);padding:1px 5px;border-radius:5px}
+.note b{font-weight:600}
+.tag{display:inline-block;font-size:11.5px;color:var(--mint-ink);
+     background:var(--mint-bg);padding:2px 8px;border-radius:6px;margin-left:6px}
+
+/* 渲染出来的语法。默认样式（蓝色下划线链接、无缩进的引用）和这套设计语言不搭，统一一下。 */
+.note a{color:var(--mint-ink);text-decoration:none;
+        border-bottom:1px solid rgba(0,199,190,.35)}
+.note s{color:var(--label3);text-decoration-thickness:1px}
+.note blockquote{margin:8px 0;padding:6px 0 6px 12px;
+                 border-left:2.5px solid rgba(0,199,190,.45);
+                 color:var(--label2);border-radius:0 4px 4px 0}
+.note blockquote + blockquote{margin-top:2px}
+.note ul{margin:6px 0;padding-left:0;list-style:none}
+.note li{margin-left:18px;padding-left:2px;color:var(--label2);position:relative}
+.note li::before{content:"";position:absolute;left:-12px;top:.62em;
+                 width:4px;height:4px;border-radius:50%;background:var(--label3)}
+.note li + li{margin-top:2px}
