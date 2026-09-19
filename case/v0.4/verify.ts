@@ -61,7 +61,7 @@ const expected: [string, string][] = [
   ['~~删~~', '<s>删</s>'],
   ['[链](http://a.b)', '<a href="http://a.b">链</a>'],
   ['> 引用', '<blockquote>引用</blockquote>'],
-  ['- 项', '<li>项</li>'],
+  ['- 项', '<ul><li>项</li></ul>'],
   ['<script>', '&lt;script&gt;'],
 ]
 for (const [input, want] of expected) {

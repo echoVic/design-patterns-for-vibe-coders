@@ -40,7 +40,13 @@ export const rules = [
   },
     // 注意匹配的是转义后的 &gt;：render 先转义再套规则
   { name: 'quote',      apply: (h: string) => h.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>') },
-  { name: 'list',       apply: (h: string) => h.replace(/^- (.+)$/gm, '<li>$1</li>') },
+  {
+    name: 'list',
+    // 连续几行 - 要包进一个 <ul> 才成列表，不然 <li> 是悬空的
+    apply: (h: string) =>
+      h.replace(/(?:^- .+$\n?)+/gm, (block) =>
+        '<ul>' + block.trimEnd().split('\n').map((l) => `<li>${l.slice(2)}</li>`).join('') + '</ul>'),
+  },
 ] as const satisfies readonly Rule[]
 
 /** 开关名从表推导，不会再和规则表脱节。 */

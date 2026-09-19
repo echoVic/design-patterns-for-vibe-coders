@@ -42,6 +42,8 @@ export function createApp({ store, options }: AppDeps) {
       const raw = input.value.trim()
       if (!raw) return
       const { text, tags } = parseTags(raw)
+      // 只有标签、没有正文，也算空——和 v0.1 到 v0.4 保持一致
+      if (!text) return
       const draft: NoteDraft = { text, createdAt: Date.now() }
       await store.append(createNote(draft, tags))
       input.value = ''

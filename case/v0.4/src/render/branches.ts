@@ -31,7 +31,10 @@ export function render(text: string, options: RenderOptions): string {
       isSafeUrl(url) ? `<a href="${escapeAttr(url)}">${text}</a>` : whole)
   }
   if (options.quote) html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
-  if (options.list) html = html.replace(/^- (.+)$/gm, '<li>$1</li>')
+  if (options.list) {
+    html = html.replace(/(?:^- .+$\n?)+/gm, (block) =>
+      '<ul>' + block.trimEnd().split('\n').map((l) => `<li>${l.slice(2)}</li>`).join('') + '</ul>')
+  }
 
   return html
 }

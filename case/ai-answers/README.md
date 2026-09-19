@@ -51,3 +51,26 @@
 顺序确实有影响，但只在标记交错的畸形输入上：`[**~~](](~~**)` 这种半截标记，不同顺序能给出四种结果。
 
 第 06 章按实测重写了这一段。**NOTES.md 保持原样**，因为它是那次实验的原件——它错了，本身就是「AI 的回答需要核实」的一个例子。
+
+
+## 第 07 章那道题的答案之一
+
+`editor-refactor/src/renderer.ts` 里有一个**死分支**：
+
+```ts
+readonly #syntaxElements = new Map<SyntaxFeature, HTMLElement>()   // 声明
+
+applySyntax(feature, enabled) {
+  this.#container.dataset[...] = enabled ? 'on' : 'off'
+  const element = this.#syntaxElements.get(feature)                 // 读
+  if (element !== undefined) element.hidden = !enabled              // 永不执行
+}
+
+destroy() { this.#syntaxElements.clear() }                          // 清
+```
+
+**这个 Map 从来没有被 `set` 过。** `get` 永远返回 `undefined`，那个 `if` 是一个永远不会进去的分支，`clear()` 清的是一个空 Map。
+
+第 07 章请读者对着那 1186 行挑「哪几行今天用得上」，这就是答案之一。
+
+**没有删掉它**——这份文件是那次实验的原件，改了就不是 AI 当时给的东西了。

@@ -70,3 +70,18 @@ font-family='${FONT}'     // XML 合法
 ```bash
 python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse(sys.argv[1])" figures/*.svg
 ```
+
+
+## 和 `case/` 实际界面的关系
+
+`note-app.html` 是**设计目标**，不是 `case/` 里那个应用的界面。
+
+| | `design/note-app.html` | `case/` |
+|---|---|---|
+| 界面 | 完整的速记应用（搜索、标签、编辑态、暗色） | 一个输入框 + 一列笔记 |
+| 用途 | 定视觉语言 | 演示代码结构 |
+| 代码 | 单文件静态稿，没有逻辑 | 五个可运行的版本 |
+
+`case/style.css` 取了这份稿子的**颜色和排版**（Apple 语义色、`tabular-nums`、mint 强调），但没有实现它的布局——书里讨论的是代码结构，界面保持最小，读者才好一眼看完。
+
+**所以打开 `case/` 看到的是一个朴素版，这是有意的。**
