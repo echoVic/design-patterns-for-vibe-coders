@@ -18,11 +18,11 @@ AI 会写代码，但不会判断结构值不值。
 
 ## 怎么读
 
-**完整读一遍**：`dist/book.html`（浏览器打开，图正常渲染）或 `dist/book.md`，三小时左右。
+**完整读一遍**：`dist/book.html`（浏览器打开，带目录，图正常渲染）、`dist/book.pdf`（73 页，可以直接打印或发给别人）或 `dist/book.md`，三小时左右。
 
 **按章读**：目录在 [CHAPTERS.md](CHAPTERS.md)。核心是第 04–13 章，14–16 是拆的部分。
 
-**只想拿结论**：附录 B 是一页检查清单，可以打印出来贴在显示器上。
+**只想拿结论**：附录 B 是一页检查清单，可以打印出来贴在显示器上（PDF 版每章另起一页，目录和导航在打印时自动隐藏）。
 
 **想自己验一遍**：`case/` 下有五个版本，从 44 行到 229 行，对应书里的几个关键节点。跑起来：
 
@@ -63,7 +63,7 @@ case/          贯穿案例，v0.1 → v1.1
 design/        视觉基准 + 插图的两条踩坑记录
 notes/         早期探索留下的发现
 scripts/       插图生成、拼书、HTML 构建、断言检查
-dist/          book.md / book.html
+dist/          book.md / book.html / book.pdf
 ```
 
 下一步：
@@ -78,7 +78,8 @@ dist/          book.md / book.html
 node scripts/figures.mjs      # 8 张插图
 node scripts/cover.mjs        # 封面
 node scripts/build-book.mjs   # dist/book.md
-node scripts/build-html.mjs   # dist/book.html
+node scripts/build-html.mjs   # dist/book.html（含目录、锚点、打印样式）
+node scripts/build-pdf.mjs    # dist/book.pdf（用系统里的 Chrome，无额外依赖）
 node scripts/check-claims.mjs # 核对书里的数字断言
 ```
 

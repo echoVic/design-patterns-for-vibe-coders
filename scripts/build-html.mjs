@@ -34,7 +34,8 @@ const toc = []
 for (const f of files) {
   const md = await readFile(join(src, f), 'utf8')
   // 附录的标题自带「附录 A　」，目录里已经有编号了，去掉前缀
-  const title = (md.match(/^#\s+(.+)$/m)?.[1] ?? f).trim().replace(/^附录\s*[AB]\s*/, '')
+    // 附录的标题自带「附录 A　」，目录里已经有编号了，去掉前缀（注意全角空格）
+  const title = (md.match(/^#\s+(.+)$/m)?.[1] ?? f).trim().replace(/^附录[\s　]*[AB][\s　]*/, '')
   const id = anchorOf(f)
   // 目录里的编号用文件名里的（00-16 和 A/B），不是列表序号——正文里全是「第 06 章」
   const num = f.match(/^(\d{2})-/)?.[1] ?? f.match(/^附录([AB])-/)?.[1] ?? ''
@@ -97,6 +98,23 @@ hr + h1{margin-top:0}
 .toc a{color:var(--ink)}
 .toc a:hover{color:var(--mint)}
 h1:target,h2:target{scroll-margin-top:24px}
+@media print{
+  body{background:#fff;line-height:1.65}
+  main{max-width:none;padding:0}
+  .toc,.chapter-nav{display:none}
+  h1{font-size:20pt;page-break-before:always;padding-top:0}
+  h1:first-of-type{page-break-before:avoid}
+  h2{font-size:13pt;page-break-after:avoid}
+  p,li,td{font-size:10.5pt}
+  pre{background:#F5F5F7;border:1px solid rgba(60,60,67,.16);
+      page-break-inside:avoid;font-size:9pt}
+  code{background:none;padding:0}
+  blockquote{background:none;border-left:2px solid #999;page-break-inside:avoid}
+  img{max-width:78%;page-break-inside:avoid}
+  table{page-break-inside:avoid}
+  hr{border:0;margin:0}
+  a{color:inherit;text-decoration:none}
+}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 `
