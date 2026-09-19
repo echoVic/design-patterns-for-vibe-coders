@@ -47,6 +47,8 @@ for (const f of files) {
   chapters.push(`<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · ${escapeHtml(title)}</nav>\n` + withId)
 }
 
+const coverHtml = `<section class="cover"><img src="../figures/cover.svg" alt="给 Vibe Coder 的设计模式"></section>`
+
 const tocHtml = `<nav id="toc" class="toc">
   <p class="toc-h">目录</p>
   <ol>${toc.map((t) => `<li><a href="#${t.id}"><span class="n">${t.num}</span>${escapeHtml(t.title)}</a></li>`).join('')}</ol>
@@ -87,6 +89,8 @@ hr + h1{margin-top:0}
 .chapter-nav{font-size:12.5px;color:var(--faint);margin-bottom:10px;font-family:var(--mono)}
 .chapter-nav a{color:var(--faint)}
 .chapter-nav a:hover{color:var(--mint)}
+.cover{margin:0 auto 48px;max-width:460px}
+.cover img{margin:0 auto}
 .toc{border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:0 0 56px;
   background:var(--card)}
 .toc-h{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.08em;
@@ -102,6 +106,10 @@ h1:target,h2:target{scroll-margin-top:24px}
   body{background:#fff;line-height:1.65}
   main{max-width:none;padding:0}
   .toc,.chapter-nav{display:none}
+  /* 扉页单独一页，图铺满 */
+  .cover{max-width:none;margin:0;page-break-after:always;
+    display:flex;align-items:center;justify-content:center;min-height:96vh}
+  .cover img{max-width:82%;max-height:92vh;margin:0}
   h1{font-size:20pt;page-break-before:always;padding-top:0}
   h1:first-of-type{page-break-before:avoid}
   h2{font-size:13pt;page-break-after:avoid}
@@ -125,8 +133,8 @@ const html = `<!doctype html>
 <title>给 Vibe Coder 的设计模式</title>
 <style>${CSS}</style>
 </head><body><main>
+${coverHtml}
 ${tocHtml}
-<hr>
 ${chapters.join('\n<hr>\n')}
 <p class="chapter-nav" style="text-align:center;margin-top:72px">
   <a href="#toc">↑ 回到目录</a>

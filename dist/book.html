@@ -37,6 +37,8 @@ hr + h1{margin-top:0}
 .chapter-nav{font-size:12.5px;color:var(--faint);margin-bottom:10px;font-family:var(--mono)}
 .chapter-nav a{color:var(--faint)}
 .chapter-nav a:hover{color:var(--mint)}
+.cover{margin:0 auto 48px;max-width:460px}
+.cover img{margin:0 auto}
 .toc{border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:0 0 56px;
   background:var(--card)}
 .toc-h{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.08em;
@@ -52,6 +54,10 @@ h1:target,h2:target{scroll-margin-top:24px}
   body{background:#fff;line-height:1.65}
   main{max-width:none;padding:0}
   .toc,.chapter-nav{display:none}
+  /* 扉页单独一页，图铺满 */
+  .cover{max-width:none;margin:0;page-break-after:always;
+    display:flex;align-items:center;justify-content:center;min-height:96vh}
+  .cover img{max-width:82%;max-height:92vh;margin:0}
   h1{font-size:20pt;page-break-before:always;padding-top:0}
   h1:first-of-type{page-break-before:avoid}
   h2{font-size:13pt;page-break-after:avoid}
@@ -69,11 +75,11 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head><body><main>
+<section class="cover"><img src="../figures/cover.svg" alt="给 Vibe Coder 的设计模式"></section>
 <nav id="toc" class="toc">
   <p class="toc-h">目录</p>
   <ol><li><a href="#ch00"><span class="n">00</span>为什么还要讲设计模式</a></li><li><a href="#ch01"><span class="n">01</span>拿到一份 AI 生成的代码，先看什么</a></li><li><a href="#ch02"><span class="n">02</span>抽象的三笔开销</a></li><li><a href="#ch03"><span class="n">03</span>把一段陌生代码读成一张图</a></li><li><a href="#ch04"><span class="n">04</span>这个接口只有一个实现</a></li><li><a href="#ch05"><span class="n">05</span>传函数，还是传对象</a></li><li><a href="#ch06-if-else"><span class="n">06</span>if-else 越写越长</a></li><li><a href="#ch07"><span class="n">07</span>构造函数参数越来越多</a></li><li><a href="#ch08"><span class="n">08</span>包了一层又一层</a></li><li><a href="#ch09"><span class="n">09</span>状态变了，界面没更新</a></li><li><a href="#ch10-new"><span class="n">10</span>到处都在 new</a></li><li><a href="#ch11"><span class="n">11</span>加一个功能，要动几个文件</a></li><li><a href="#ch12"><span class="n">12</span>同样的代码出现了三遍</a></li><li><a href="#ch13"><span class="n">13</span>谁都需要那个对象</a></li><li><a href="#ch14"><span class="n">14</span>什么时候该拆，什么时候不该</a></li><li><a href="#ch15"><span class="n">15</span>怎么安全地拆</a></li><li><a href="#ch16"><span class="n">16</span>抽象的收益曲线</a></li><li><a href="#ch-A"><span class="n">A</span>模式索引</a></li><li><a href="#ch-B"><span class="n">B</span>一页检查清单</a></li></ol>
 </nav>
-<hr>
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 为什么还要讲设计模式</nav>
 <h1 id="ch00">为什么还要讲设计模式</h1>
 <h2>先看一段代码</h2>
