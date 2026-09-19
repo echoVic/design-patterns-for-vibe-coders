@@ -58,8 +58,11 @@ h1:target,h2:target{scroll-margin-top:24px}
   .cover{max-width:none;margin:0;page-break-after:always;
     display:flex;align-items:center;justify-content:center;min-height:96vh}
   .cover img{max-width:82%;max-height:92vh;margin:0}
-  h1{font-size:20pt;page-break-before:always;padding-top:0}
-  h1:first-of-type{page-break-before:avoid}
+  /* 每章另起一页。注意不能写成 h1:first-of-type——每章被 section 包着，
+     每个 h1 都是自己 section 里的第一个，会被全部命中 */
+  .chapter{break-before:page}
+  .chapter:first-of-type{break-before:avoid}
+  h1{font-size:20pt;padding-top:0}
   h2{font-size:13pt;page-break-after:avoid}
   p,li,td{font-size:10.5pt}
   pre{background:#F5F5F7;border:1px solid rgba(60,60,67,.16);
@@ -70,6 +73,16 @@ h1:target,h2:target{scroll-margin-top:24px}
   table{page-break-inside:avoid}
   hr{border:0;margin:0}
   a{color:inherit;text-decoration:none}
+  /* 附录 B 承诺是「一页」清单：打印时分两栏、缩字号，压到一页里 */
+  .appendix-b{column-count:2;column-gap:24px;font-size:8.6pt;line-height:1.5}
+  .appendix-b h1{column-span:all;font-size:15pt;margin:0 0 4pt}
+  .appendix-b h2{font-size:9.6pt;margin:8pt 0 2pt;break-after:avoid}
+  .appendix-b p,.appendix-b ul,.appendix-b ol{margin:0 0 3pt}
+  .appendix-b li{margin-bottom:1.5pt}
+  .appendix-b strong{font-weight:600}
+  .appendix-b hr{display:none}
+  /* 折叠掉附录 B 里那条横线和「回目录」 */
+  .appendix-b + hr,.appendix-b .chapter-nav{display:none}
 }
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -80,6 +93,7 @@ html{scroll-behavior:smooth}
   <p class="toc-h">目录</p>
   <ol><li><a href="#ch00"><span class="n">00</span>为什么还要讲设计模式</a></li><li><a href="#ch01"><span class="n">01</span>拿到一份 AI 生成的代码，先看什么</a></li><li><a href="#ch02"><span class="n">02</span>抽象的三笔开销</a></li><li><a href="#ch03"><span class="n">03</span>把一段陌生代码读成一张图</a></li><li><a href="#ch04"><span class="n">04</span>这个接口只有一个实现</a></li><li><a href="#ch05"><span class="n">05</span>传函数，还是传对象</a></li><li><a href="#ch06-if-else"><span class="n">06</span>if-else 越写越长</a></li><li><a href="#ch07"><span class="n">07</span>构造函数参数越来越多</a></li><li><a href="#ch08"><span class="n">08</span>包了一层又一层</a></li><li><a href="#ch09"><span class="n">09</span>状态变了，界面没更新</a></li><li><a href="#ch10-new"><span class="n">10</span>到处都在 new</a></li><li><a href="#ch11"><span class="n">11</span>加一个功能，要动几个文件</a></li><li><a href="#ch12"><span class="n">12</span>同样的代码出现了三遍</a></li><li><a href="#ch13"><span class="n">13</span>谁都需要那个对象</a></li><li><a href="#ch14"><span class="n">14</span>什么时候该拆，什么时候不该</a></li><li><a href="#ch15"><span class="n">15</span>怎么安全地拆</a></li><li><a href="#ch16"><span class="n">16</span>抽象的收益曲线</a></li><li><a href="#ch-A"><span class="n">A</span>模式索引</a></li><li><a href="#ch-B"><span class="n">B</span>一页检查清单</a></li></ol>
 </nav>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 为什么还要讲设计模式</nav>
 <h1 id="ch00">为什么还要讲设计模式</h1>
 <h2>先看一段代码</h2>
@@ -201,7 +215,9 @@ class Exporter {
 <hr>
 <p>案例的完整代码在 <code>case/</code>。<code>v0.1</code> 是那 44 行，<code>v0.2</code> 是那 150 行，你可以自己逐行比一遍，看看还丢了什么我没提到的。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 拿到一份 AI 生成的代码，先看什么</nav>
 <h1 id="ch01">拿到一份 AI 生成的代码，先看什么</h1>
 <h2>别从代码开始读</h2>
@@ -261,7 +277,9 @@ local-storage-provider.ts  save() 写 localStorage
 <p>不用评价好坏，先拿到这三个数字。</p>
 <p>下一章说这三个数字怎么用。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 抽象的三笔开销</nav>
 <h1 id="ch02">抽象的三笔开销</h1>
 <h2>抽象不是免费的</h2>
@@ -330,7 +348,9 @@ local-storage-provider.ts  save() 写 localStorage
 <p>所以每次接受一次重构，做一件事：<strong>把新旧两版并排打开，不只看加了什么，也看少了什么。</strong></p>
 <p>多出来的抽象是看得见的，丢掉的细节是看不见的。你只会注意到前者。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 把一段陌生代码读成一张图</nav>
 <h1 id="ch03">把一段陌生代码读成一张图</h1>
 <h2>不画 UML</h2>
@@ -412,7 +432,9 @@ note-factory.ts    note-repository.ts
 <p>上面那张图是用空格和竖线对齐出来的，歪歪扭扭也没关系。</p>
 <p>关键是节点和边，不是排版。你可以画在纸上、画在白板上、写在代码注释里。这个动作的价值在于迫使你把「谁调谁」这件事显式写下来——写的过程里，直通的节点会自己浮出来。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 这个接口只有一个实现</nav>
 <h1 id="ch04">这个接口只有一个实现</h1>
 <h2>我为它准备了这么久，它没帮上忙</h2>
@@ -499,7 +521,9 @@ note-factory.ts    note-repository.ts
 <p>有了接口，将来换实现就不用改上层？只有当接口描述的是需求时才成立。描述能力的接口，换个约束不同的实现就散架。判断方法：把第二个实现的约束列出来，看接口里的方法签名还成立不成立。</p>
 <p>接口越多，代码越灵活？接口的成本不在写它的那几行，在于每一个读者都要多跳一层才能看到实际发生的事。第 00 章那个 150 行的版本里，光是为了看「笔记怎么存的」，就要穿过 <code>NoteService</code>、<code>NoteRepository</code>、<code>StorageProvider</code> 三层。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 传函数，还是传对象</nav>
 <h1 id="ch05">传函数，还是传对象</h1>
 <h2>我想给笔记加一点格式</h2>
@@ -587,7 +611,9 @@ export const renderMarkdown: Render = (text) =&gt;
 <p>用函数以后不好换成类？反过来才对。从函数换成函数工厂，调用方看不见；从类换成函数，调用方要改。<strong>先用轻的，重的那一步随时可以加。</strong></p>
 <p>接口让实现可以替换？如果接口只有一个方法，那个「接口」本来就是一个函数类型签名。第 04 章讲过，誊本式的接口挡不住变化——一个只有单方法的接口，连誊本都算不上，它就是函数类型绕了个远路。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · if-else 越写越长</nav>
 <h1 id="ch06-if-else">if-else 越写越长</h1>
 <h2>从两种语法到六种</h2>
@@ -693,7 +719,9 @@ export function renderWith(text: string, options: RenderOptions): string {
 <p>表驱动不好调试？恰恰相反。数组可以打印、可以切片、可以在测试里换个顺序跑。六个 if 你只能一行行读，而且 <code>console.log</code> 要插六次。</p>
 <p>反正能跑就行？这六行确实能跑。问题不在今天，在你三个月后想加第七种语法、又记不清该插在第几行的时候。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 构造函数参数越来越多</nav>
 <h1 id="ch07">构造函数参数越来越多</h1>
 <h2>十二个参数</h2>
@@ -785,7 +813,9 @@ example.ts           新旧调用方对照
 <p>把参数分组只是为了好看？不是。分组之后那个对象可以被整体传递、存储、比较、重置。散参数做不到其中任何一件。</p>
 <p>一次分好组就不用管了？分组会过期。每加一个新配置，回头看一眼它属于哪一组；如果哪一组开始装不下，那是边界该重划的信号。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 包了一层又一层</nav>
 <h1 id="ch08">包了一层又一层</h1>
 <h2>保存这件事长了四层</h2>
@@ -855,7 +885,9 @@ const save = middlewares.reduceRight((next, wrap) =&gt; wrap(next), rawSave)
 <p>每加一个需求就包一层？包装之前先看一眼：这一层和已有的某一层会不会永远同时出现？如果会，它们其实是一件事，该合成一层。永远同时出现的两层包装，等于一个没起名字的层。</p>
 <p>拆掉某一层会让代码变不安全？拆日志不会。拆重试会。这正是要逐层问一遍的原因——四层里混着两类东西，一刀切地留或者删都会错。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 状态变了，界面没更新</nav>
 <h1 id="ch09">状态变了，界面没更新</h1>
 <h2>一个所有人都会遇到的 bug</h2>
@@ -928,7 +960,9 @@ console.log(performance.now() - t)
 <p>把 render 拆小一点，哪个变了只更新哪个？这正是细粒度更新的思路，但它只在真的有性能问题时才划算。拆开之后，「改了状态要调哪几个渲染函数」变成了一个新的、需要维护的知识——就是本章开头那个 bug 的成因。</p>
 <p>这个 bug 修好了就行？修一行让它今天不犯。消除那个派生状态，让它以后不犯。<strong>前者的成本是五分钟，后者是十分钟，但只有后者是复利。</strong></p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 到处都在 new</nav>
 <h1 id="ch10-new">到处都在 new</h1>
 <h2>三处 new 了同一个东西</h2>
@@ -1000,7 +1034,9 @@ export function createExporter(service: NoteService) { /* ... */ }
 <p>模块顶部 new 一个，模块自己管，这叫高内聚？高内聚说的是模块内部的事归模块管，不是模块自己造依赖。自己造依赖恰恰是低内聚的表现：它把「这个模块需要什么」和「这个东西怎么造」两件事绑在一起了。</p>
 <p>依赖注入太重了，要装框架？依赖注入是一件事，框架是另一件。<strong>把创建挪到一个地方、把依赖写进参数，这就是依赖注入</strong>，不需要任何库。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 加一个功能，要动几个文件</nav>
 <h1 id="ch11">加一个功能，要动几个文件</h1>
 <h2>我想加搜索</h2>
@@ -1084,7 +1120,9 @@ src/search.ts      新增
 <p>重构之后文件数变少了，说明成功了？文件数是过程指标。要看的是同类改动的成本。第 00 章那个 150 行的版本文件数比 44 行的多，但它的问题不是文件多，是没有一类改动变得更便宜。</p>
 <p>现在改动少，不用管？现在就列清单。等到改动变贵的时候，你已经不知道是哪次改动让它变贵的了。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 同样的代码出现了三遍</nav>
 <h1 id="ch12">同样的代码出现了三遍</h1>
 <h2>三处几乎一样的错误处理</h2>
@@ -1178,7 +1216,9 @@ readWithToast(&#39;读取笔记&#39;, () =&gt; storage.load())
 <p>先抽了再说，不对再拆？可以，而且这是推荐的做法——因为拆回去比你想的容易，而抽出来的收益要等很久才显现。但拆的时候要看证据：<strong>参数列表就是证据。</strong></p>
 <p>用继承来解决重复？继承把「共同的部分」放父类，「不同的部分」放子类。当差异是数据的时候，继承会造出一堆只有一行常量不同的子类；当差异是一个洞的时候，传函数就够了。继承适合的是「差异有好几个、而且要各自演化」的情况，那个情况比你想象的少。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 谁都需要那个对象</nav>
 <h1 id="ch13">谁都需要那个对象</h1>
 <h2>三个参数，传了三层</h2>
@@ -1264,7 +1304,9 @@ export const env = {
 <p>透传层数多说明架构烂？透传层数说明的是这条链上有几个不需要这个参数的中间层。问题在中间层，不在透传本身。</p>
 <p>所有依赖都显式传递最规范？显式传递是有成本的：每一个中间层都要在签名里带上它不用的东西。环境类的依赖注入一次就够了，把它当数据传是把规范用错了地方。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 什么时候该拆，什么时候不该</nav>
 <h1 id="ch14">什么时候该拆，什么时候不该</h1>
 <h2>前面十一章给了工具，这一章给顺序</h2>
@@ -1358,7 +1400,9 @@ export const env = {
 <p>判断做完了，动手拆。拆的过程比判断更容易出事——你会同时改好几个文件，跑不起来的时候不知道是哪一步坏的。</p>
 <p>下一章讲怎么拆得安全。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 怎么安全地拆</nav>
 <h1 id="ch15">怎么安全地拆</h1>
 <h2>拆比判断更容易出事</h2>
@@ -1448,7 +1492,9 @@ render()
 <p>八步，三层测试。看着啰嗦，但每一步之后你都明确知道现在是什么状态。</p>
 <p>下一章是最后一章。回到第 00 章那两份代码，把整条路走完。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 抽象的收益曲线</nav>
 <h1 id="ch16">抽象的收益曲线</h1>
 <h2>回到那两份代码</h2>
@@ -1580,7 +1626,9 @@ src/main.ts           界面 + 组装
 <p>案例的完整演进在 <code>case/</code>。<code>v0.1</code> 是那 44 行，<code>v0.2</code> 是那 150 行，<code>v1.1</code> 是终点。中间还留了两个版本（<code>v0.3</code>、<code>v0.4</code>），一共五个，对应书里的几个关键节点，不是每章一版。你可以逐行比一遍，看看还有哪些我没提到的东西。</p>
 <p>附录 A 是模式索引，按 GoF 的名字反查章节。附录 B 是一页检查清单，可以打印出来贴在显示器上。</p>
 
+</section>
 <hr>
+<section class="chapter">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 模式索引</nav>
 <h1 id="ch-A">附录 A　模式索引</h1>
 <p>这本书不按模式分章，但你可能就是想知道「适配器模式在哪一章」。按名字查这里。</p>
@@ -1692,7 +1740,9 @@ src/main.ts           界面 + 组装
 <p>上面「没展开」的那一列有十几个名字。<strong>如果你在 AI 生成的代码里看到它们中的任何一个，第一反应不该是「哦这是访问者模式」，而是「它服务几个消费者」。</strong></p>
 <p>这本书从头到尾只有这一个判据。模式的名字是一条线索，不是结论。</p>
 
+</section>
 <hr>
+<section class="chapter appendix-b">
 <nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 一页检查清单</nav>
 <h1 id="ch-B">附录 B　一页检查清单</h1>
 <p>这一页是可以单独打印出来的部分。<strong>它不替代正文</strong>，但你在改一份 AI 生成的代码之前扫一眼，能省掉大部分来回。</p>
@@ -1755,6 +1805,7 @@ src/main.ts           界面 + 组装
 <p><strong>抽象买的是曲线斜率：付一次建立成本，换以后每次加功能便宜一点。</strong></p>
 <p><strong>判断一份代码好不好，看你要做下一个改动时，它挡不挡路。</strong></p>
 
+</section>
 <p class="chapter-nav" style="text-align:center;margin-top:72px">
   <a href="#toc">↑ 回到目录</a>
 </p>

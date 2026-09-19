@@ -44,7 +44,11 @@ for (const f of files) {
   const body = marked.parse(md.replace(/\]\(figures\//g, '](../figures/'))
   // 标题加锚点；正文前插一个「回目录」
   const withId = body.replace(/<h1>/, `<h1 id="${id}">`)
-  chapters.push(`<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · ${escapeHtml(title)}</nav>\n` + withId)
+  const cls = id === 'ch-B' ? 'chapter appendix-b' : 'chapter'
+  chapters.push(
+    `<section class="${cls}">\n` +
+    `<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · ${escapeHtml(title)}</nav>\n` +
+    withId + '\n</section>')
 }
 
 const coverHtml = `<section class="cover"><img src="../figures/cover.svg" alt="给 Vibe Coder 的设计模式"></section>`
@@ -110,8 +114,11 @@ h1:target,h2:target{scroll-margin-top:24px}
   .cover{max-width:none;margin:0;page-break-after:always;
     display:flex;align-items:center;justify-content:center;min-height:96vh}
   .cover img{max-width:82%;max-height:92vh;margin:0}
-  h1{font-size:20pt;page-break-before:always;padding-top:0}
-  h1:first-of-type{page-break-before:avoid}
+  /* 每章另起一页。注意不能写成 h1:first-of-type——每章被 section 包着，
+     每个 h1 都是自己 section 里的第一个，会被全部命中 */
+  .chapter{break-before:page}
+  .chapter:first-of-type{break-before:avoid}
+  h1{font-size:20pt;padding-top:0}
   h2{font-size:13pt;page-break-after:avoid}
   p,li,td{font-size:10.5pt}
   pre{background:#F5F5F7;border:1px solid rgba(60,60,67,.16);
@@ -122,6 +129,16 @@ h1:target,h2:target{scroll-margin-top:24px}
   table{page-break-inside:avoid}
   hr{border:0;margin:0}
   a{color:inherit;text-decoration:none}
+  /* 附录 B 承诺是「一页」清单：打印时分两栏、缩字号，压到一页里 */
+  .appendix-b{column-count:2;column-gap:24px;font-size:8.6pt;line-height:1.5}
+  .appendix-b h1{column-span:all;font-size:15pt;margin:0 0 4pt}
+  .appendix-b h2{font-size:9.6pt;margin:8pt 0 2pt;break-after:avoid}
+  .appendix-b p,.appendix-b ul,.appendix-b ol{margin:0 0 3pt}
+  .appendix-b li{margin-bottom:1.5pt}
+  .appendix-b strong{font-weight:600}
+  .appendix-b hr{display:none}
+  /* 折叠掉附录 B 里那条横线和「回目录」 */
+  .appendix-b + hr,.appendix-b .chapter-nav{display:none}
 }
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
