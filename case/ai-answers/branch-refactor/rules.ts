@@ -5,15 +5,25 @@
  * 行的 name 就是那个开关——没有第二处需要同步的地方。
  */
 
-/** 一条规则，从左往右读就是一次 String.replace。 */
-export interface Rule {
-  /** 规则名，同时也是 RenderOptions 里的开关名。 */
-  readonly name: string
-  /** 匹配用的正则，需要带 g。 */
-  readonly pattern: RegExp
-  /** 替换成的 HTML，用 $1 $2 引用捕获组。 */
-  readonly replacement: string
-}
+/**
+ * 一条规则。
+ *
+ * 多数规则是「匹配 + 替换」两步，写成 pattern/replacement 最直白。
+ * 少数几步做不到（比如列表要把连续的几行一起包进 <ul>），就用 apply 写函数。
+ */
+export type Rule =
+  | {
+      /** 规则名，同时也是 RenderOptions 里的开关名。 */
+      readonly name: string
+      /** 匹配用的正则，需要带 g。 */
+      readonly pattern: RegExp
+      /** 替换成的 HTML，用 $1 $2 引用捕获组。 */
+      readonly replacement: string
+    }
+  | {
+      readonly name: string
+      readonly apply: (html: string) => string
+    }
 
 /**
  * 规则的唯一来源。
@@ -29,7 +39,12 @@ export const RULES = [
   { name: 'strike',     pattern: /~~(.+?)~~/g,          replacement: '<s>$1</s>' },
   { name: 'link',       pattern: /\[(.+?)\]\((.+?)\)/g, replacement: '<a href="$2">$1</a>' },
   { name: 'quote',      pattern: /^&gt; (.+)$/gm,          replacement: '<blockquote>$1</blockquote>' },
-  { name: 'list',       pattern: /^- (.+)$/gm,          replacement: '<li>$1</li>' },
+  {
+    name: 'list',
+    // 连续几行 - 要包进一个 <ul>，不然 <li> 是悬空的
+    apply: (h) => h.replace(/(?:^- .+$\n?)+/gm, (block) =>
+      '<ul>' + block.trimEnd().split('\n').map((l) => `<li>${l.slice(2)}</li>`).join('') + '</ul>'),
+  },
 ] as const satisfies readonly Rule[]
 
 /** 有哪几种语法，由 RULES 说了算，不另外维护一份名单。 */
