@@ -1,4 +1,4 @@
-<img src="figures/cover.svg" width="360" align="right" alt="给 Vibe Coder 的设计模式">
+<img src="figures/cover.svg" width="264" align="right" alt="给 Vibe Coder 的设计模式">
 
 # 给 Vibe Coder 的设计模式
 
