@@ -8,8 +8,7 @@
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-// marked 从同级仓库的 pnpm store 引入，避免这个仓库再装一遍依赖
-import { marked } from '/Users/qingyun/Documents/GitHub/qingyun-blog/node_modules/.pnpm/marked@16.4.2/node_modules/marked/lib/marked.esm.js'
+import { marked } from 'marked'
 
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
 const escapeHtml = esc

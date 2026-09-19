@@ -76,6 +76,23 @@ dist/          book.md / book.html / book-standalone.html / book.pdf
 2. **定发布形式**（PDF / 站点）
 3. 第 13 章是推演场景，如果真要它落地，得先把设置面板和导出模块写出来
 
+## 授权
+
+**书稿和代码分开授权。**
+
+| | 范围 | 许可 |
+|---|---|---|
+| 文字 | `manuscripts/`、`dist/` 下的书稿、说明文档 | [CC BY-NC-SA 4.0](LICENSE-TEXT) —— 可转载、可改编，需署名、不能商用、相同方式共享 |
+| 代码 | `case/`、`scripts/`、插图 SVG、文中的代码片段 | [MIT](LICENSE) |
+
+转载正文请署名并链回本仓库：
+
+```
+青雲老哥《给 Vibe Coder 的设计模式》
+https://github.com/echoVic/design-patterns-for-vibe-coders
+CC BY-NC-SA 4.0
+```
+
 ## 重新生成
 
 ```bash

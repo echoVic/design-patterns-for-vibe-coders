@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>贯穿案例 · 给 Vibe Coder 的设计模式</title>
+<style>
+:root{--bg:#F2F2F7;--card:#FFF;--label:#000;--label2:rgba(60,60,67,.60);
+  --label3:rgba(60,60,67,.30);--sep:rgba(60,60,67,.16);--mint:#00A69E;
+  --sans:-apple-system,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--label);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.7;padding:64px 24px 96px}
+.wrap{max-width:620px;margin:0 auto}
+h1{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:var(--label3);font-size:13px;font-family:var(--mono);margin-bottom:34px}
+a.card{display:block;background:var(--card);border-radius:14px;padding:16px 18px;
+  margin-bottom:10px;text-decoration:none;color:inherit;
+  transition:transform .12s ease, box-shadow .12s ease}
+a.card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.row{display:flex;align-items:baseline;gap:12px}
+.v{font-family:var(--mono);font-size:13px;color:var(--mint);font-weight:600;
+  min-width:46px;font-variant-numeric:tabular-nums}
+.t{font-size:15.5px;font-weight:600}
+.d{color:var(--label2);font-size:13.5px;margin-top:3px}
+.note{margin-top:28px;color:var(--label2);font-size:13.5px;line-height:1.75}
+code{font-family:var(--mono);font-size:12.5px;background:rgba(60,60,67,.07);
+  padding:2px 6px;border-radius:5px}
+</style>
+</head>
+<body><div class="wrap">
+  <h1>贯穿案例</h1>
+  <p class="sub">《给 Vibe Coder 的设计模式》· 一本速记应用的五个版本</p>
+
+  <a class="card" href="./v0.1/">
+    <div class="row"><span class="v">v0.1</span><span class="t">起点：一个文件 44 行</span></div>
+    <div class="d">能用，能跑。这是全书要回到的参照点。</div>
+  </a>
+  <a class="card" href="./v0.2/">
+    <div class="row"><span class="v">v0.2</span><span class="t">过度抽象：七个文件 150 行</span></div>
+    <div class="d">「帮我重构得专业点」的典型产出。每个文件单看都合理，结构上多余。<b>而且弄丢了 HTML 转义。</b></div>
+  </a>
+  <a class="card" href="./v0.3/">
+    <div class="row"><span class="v">v0.3</span><span class="t">加渲染层</span></div>
+    <div class="d">一个只有单方法的接口，就是一个函数类型。</div>
+  </a>
+  <a class="card" href="./v0.4/">
+    <div class="row"><span class="v">v0.4</span><span class="t">六种语法，两种写法</span></div>
+    <div class="d">六个 if 对照六条规则一张表。两份实现输出逐字节一致。</div>
+  </a>
+  <a class="card" href="./v1.1/">
+    <div class="row"><span class="v">v1.1</span><span class="t">拆完的终点</span></div>
+    <div class="d">六个文件 237 行。删掉了三层直通，多了渲染、标签和输入校验。</div>
+  </a>
+
+  <p class="note">
+    五个版本共用同一个 <code>localStorage</code> 键，在一个版本里写的笔记会出现在另一个版本里。
+    想从干净状态开始，在控制台执行 <code>localStorage.clear()</code>。
+  </p>
+</div></body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "design-patterns-for-vibe-coders",
+  "private": true,
+  "type": "module",
+  "description": "《给 Vibe Coder 的设计模式》——书稿、插图与贯穿案例",
+  "scripts": {
+    "build": "node scripts/build-all.mjs",
+    "check": "node scripts/check-claims.mjs",
+    "case": "cd case && npm run dev"
+  },
+  "devDependencies": {
+    "marked": "^16.4.2"
+  }
+}
