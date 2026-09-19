@@ -11,6 +11,9 @@ import { fileURLToPath } from 'node:url'
 // marked 从同级仓库的 pnpm store 引入，避免这个仓库再装一遍依赖
 import { marked } from '/Users/qingyun/Documents/GitHub/qingyun-blog/node_modules/.pnpm/marked@16.4.2/node_modules/marked/lib/marked.esm.js'
 
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+const escapeHtml = esc
+
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const src = join(root, 'manuscripts')
 const out = join(root, 'dist')
@@ -23,12 +26,30 @@ const order = (n) => {
 const files = (await readdir(src)).filter((f) => f.endsWith('.md'))
   .sort((a, b) => { const [x, y] = order(a), [p, q] = order(b); return x - p || (y < q ? -1 : y > q ? 1 : 0) })
 
+/** 给每章一个稳定的锚点，目录要用。 */
+const anchorOf = (f) => 'ch' + f.replace(/\..*$/, '').replace(/[^0-9A-Za-z]+/g, '-').replace(/-+$/, '')
+
 const chapters = []
+const toc = []
 for (const f of files) {
   const md = await readFile(join(src, f), 'utf8')
+  // 附录的标题自带「附录 A　」，目录里已经有编号了，去掉前缀
+  const title = (md.match(/^#\s+(.+)$/m)?.[1] ?? f).trim().replace(/^附录\s*[AB]\s*/, '')
+  const id = anchorOf(f)
+  // 目录里的编号用文件名里的（00-16 和 A/B），不是列表序号——正文里全是「第 06 章」
+  const num = f.match(/^(\d{2})-/)?.[1] ?? f.match(/^附录([AB])-/)?.[1] ?? ''
+  toc.push({ id, title, num })
   // 图片路径要相对 dist/ 修正
-  chapters.push(marked.parse(md.replace(/\]\(figures\//g, '](../figures/')))
+  const body = marked.parse(md.replace(/\]\(figures\//g, '](../figures/'))
+  // 标题加锚点；正文前插一个「回目录」
+  const withId = body.replace(/<h1>/, `<h1 id="${id}">`)
+  chapters.push(`<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · ${escapeHtml(title)}</nav>\n` + withId)
 }
+
+const tocHtml = `<nav id="toc" class="toc">
+  <p class="toc-h">目录</p>
+  <ol>${toc.map((t) => `<li><a href="#${t.id}"><span class="n">${t.num}</span>${escapeHtml(t.title)}</a></li>`).join('')}</ol>
+</nav>`
 
 const CSS = `
 :root{--ink:#1D1D1F;--soft:rgba(60,60,67,.72);--faint:rgba(60,60,67,.42);
@@ -62,7 +83,22 @@ th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);color
 th{color:var(--faint);font-weight:500;font-size:13px}
 hr{border:0;border-top:1px solid var(--line);margin:64px 0}
 hr + h1{margin-top:0}
-.chapter-nav{font-size:13px;color:var(--faint);margin-bottom:8px;font-family:var(--mono)}
+.chapter-nav{font-size:12.5px;color:var(--faint);margin-bottom:10px;font-family:var(--mono)}
+.chapter-nav a{color:var(--faint)}
+.chapter-nav a:hover{color:var(--mint)}
+.toc{border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:0 0 56px;
+  background:var(--card)}
+.toc-h{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.08em;
+  text-transform:uppercase;margin:0 0 14px}
+.toc ol{list-style:none;margin:0}
+.toc li{margin-bottom:9px;line-height:1.55;font-size:15px}
+.toc .n{display:inline-block;min-width:30px;font-family:var(--mono);
+  font-size:12px;color:var(--faint)}
+.toc a{color:var(--ink)}
+.toc a:hover{color:var(--mint)}
+h1:target,h2:target{scroll-margin-top:24px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 `
 
 const html = `<!doctype html>
@@ -71,7 +107,12 @@ const html = `<!doctype html>
 <title>给 Vibe Coder 的设计模式</title>
 <style>${CSS}</style>
 </head><body><main>
+${tocHtml}
+<hr>
 ${chapters.join('\n<hr>\n')}
+<p class="chapter-nav" style="text-align:center;margin-top:72px">
+  <a href="#toc">↑ 回到目录</a>
+</p>
 </main></body></html>`
 
 await mkdir(out, { recursive: true })

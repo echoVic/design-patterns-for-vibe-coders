@@ -34,10 +34,31 @@ th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);color
 th{color:var(--faint);font-weight:500;font-size:13px}
 hr{border:0;border-top:1px solid var(--line);margin:64px 0}
 hr + h1{margin-top:0}
-.chapter-nav{font-size:13px;color:var(--faint);margin-bottom:8px;font-family:var(--mono)}
+.chapter-nav{font-size:12.5px;color:var(--faint);margin-bottom:10px;font-family:var(--mono)}
+.chapter-nav a{color:var(--faint)}
+.chapter-nav a:hover{color:var(--mint)}
+.toc{border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:0 0 56px;
+  background:var(--card)}
+.toc-h{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.08em;
+  text-transform:uppercase;margin:0 0 14px}
+.toc ol{list-style:none;margin:0}
+.toc li{margin-bottom:9px;line-height:1.55;font-size:15px}
+.toc .n{display:inline-block;min-width:30px;font-family:var(--mono);
+  font-size:12px;color:var(--faint)}
+.toc a{color:var(--ink)}
+.toc a:hover{color:var(--mint)}
+h1:target,h2:target{scroll-margin-top:24px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head><body><main>
-<h1>为什么还要讲设计模式</h1>
+<nav id="toc" class="toc">
+  <p class="toc-h">目录</p>
+  <ol><li><a href="#ch00"><span class="n">00</span>为什么还要讲设计模式</a></li><li><a href="#ch01"><span class="n">01</span>拿到一份 AI 生成的代码，先看什么</a></li><li><a href="#ch02"><span class="n">02</span>抽象的三笔开销</a></li><li><a href="#ch03"><span class="n">03</span>把一段陌生代码读成一张图</a></li><li><a href="#ch04"><span class="n">04</span>这个接口只有一个实现</a></li><li><a href="#ch05"><span class="n">05</span>传函数，还是传对象</a></li><li><a href="#ch06-if-else"><span class="n">06</span>if-else 越写越长</a></li><li><a href="#ch07"><span class="n">07</span>构造函数参数越来越多</a></li><li><a href="#ch08"><span class="n">08</span>包了一层又一层</a></li><li><a href="#ch09"><span class="n">09</span>状态变了，界面没更新</a></li><li><a href="#ch10-new"><span class="n">10</span>到处都在 new</a></li><li><a href="#ch11"><span class="n">11</span>加一个功能，要动几个文件</a></li><li><a href="#ch12"><span class="n">12</span>同样的代码出现了三遍</a></li><li><a href="#ch13"><span class="n">13</span>谁都需要那个对象</a></li><li><a href="#ch14"><span class="n">14</span>什么时候该拆，什么时候不该</a></li><li><a href="#ch15"><span class="n">15</span>怎么安全地拆</a></li><li><a href="#ch16"><span class="n">16</span>抽象的收益曲线</a></li><li><a href="#ch-A"><span class="n">A</span>模式索引</a></li><li><a href="#ch-B"><span class="n">B</span>一页检查清单</a></li></ol>
+</nav>
+<hr>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 为什么还要讲设计模式</nav>
+<h1 id="ch00">为什么还要讲设计模式</h1>
 <h2>先看一段代码</h2>
 <p>我让 AI 写一个速记应用。要求很简单：打开就能写，写完自己存下来。</p>
 <p>第一版出来了，一个文件，44 行。输入框、列表、localStorage，没有别的。</p>
@@ -158,7 +179,8 @@ class Exporter {
 <p>案例的完整代码在 <code>case/</code>。<code>v0.1</code> 是那 44 行，<code>v0.2</code> 是那 150 行，你可以自己逐行比一遍，看看还丢了什么我没提到的。</p>
 
 <hr>
-<h1>拿到一份 AI 生成的代码，先看什么</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 拿到一份 AI 生成的代码，先看什么</nav>
+<h1 id="ch01">拿到一份 AI 生成的代码，先看什么</h1>
 <h2>别从代码开始读</h2>
 <p>你让 AI 写完一个功能，它给了你一堆文件。下一步该干什么？</p>
 <p>多数人的第一反应是打开最熟悉的那个文件，或者按字母顺序从第一个读起。这两个都不好使，因为你还不知道哪些文件重要。</p>
@@ -217,7 +239,8 @@ local-storage-provider.ts  save() 写 localStorage
 <p>下一章说这三个数字怎么用。</p>
 
 <hr>
-<h1>抽象的三笔开销</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 抽象的三笔开销</nav>
+<h1 id="ch02">抽象的三笔开销</h1>
 <h2>抽象不是免费的</h2>
 <p>上一章量了三个数：操作数、层数、要打开几个文件。这一章说它们能换来什么，以及要付出什么。</p>
 <p>先说结论：<strong>抽象的开销不在代码行数上。</strong></p>
@@ -285,7 +308,8 @@ local-storage-provider.ts  save() 写 localStorage
 <p>多出来的抽象是看得见的，丢掉的细节是看不见的。你只会注意到前者。</p>
 
 <hr>
-<h1>把一段陌生代码读成一张图</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 把一段陌生代码读成一张图</nav>
+<h1 id="ch03">把一段陌生代码读成一张图</h1>
 <h2>不画 UML</h2>
 <p>几乎所有讲设计模式的书都会给你看类图：空心三角表示继承，空心菱形表示聚合，实心菱形表示组合。</p>
 <p>这一章不画那个。不是因为它错，是因为它需要你先接受一整套记号，才看得懂它想说什么。而你现在的问题是「这段代码在干什么」，不是「这段代码符合哪种关系」。</p>
@@ -366,7 +390,8 @@ note-factory.ts    note-repository.ts
 <p>关键是节点和边，不是排版。你可以画在纸上、画在白板上、写在代码注释里。这个动作的价值在于迫使你把「谁调谁」这件事显式写下来——写的过程里，直通的节点会自己浮出来。</p>
 
 <hr>
-<h1>这个接口只有一个实现</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 这个接口只有一个实现</nav>
+<h1 id="ch04">这个接口只有一个实现</h1>
 <h2>我为它准备了这么久，它没帮上忙</h2>
 <p>第 00 章那份 <code>v0.2</code> 里有一个接口（下面是节选，去掉了注释）：</p>
 <pre><code class="language-ts">export interface StorageProvider {
@@ -452,7 +477,8 @@ note-factory.ts    note-repository.ts
 <p>接口越多，代码越灵活？接口的成本不在写它的那几行，在于每一个读者都要多跳一层才能看到实际发生的事。第 00 章那个 150 行的版本里，光是为了看「笔记怎么存的」，就要穿过 <code>NoteService</code>、<code>NoteRepository</code>、<code>StorageProvider</code> 三层。</p>
 
 <hr>
-<h1>传函数，还是传对象</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 传函数，还是传对象</nav>
+<h1 id="ch05">传函数，还是传对象</h1>
 <h2>我想给笔记加一点格式</h2>
 <p>笔记都是纯文本。我想让它支持两种标记：<code>加粗</code> 和 <code>`行内代码`</code>。</p>
 <p>改动很小。渲染的时候把标记换成标签就行。</p>
@@ -539,7 +565,8 @@ export const renderMarkdown: Render = (text) =&gt;
 <p>接口让实现可以替换？如果接口只有一个方法，那个「接口」本来就是一个函数类型签名。第 04 章讲过，誊本式的接口挡不住变化——一个只有单方法的接口，连誊本都算不上，它就是函数类型绕了个远路。</p>
 
 <hr>
-<h1>if-else 越写越长</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · if-else 越写越长</nav>
+<h1 id="ch06-if-else">if-else 越写越长</h1>
 <h2>从两种语法到六种</h2>
 <p>渲染器原本只支持加粗和行内代码。后来我想多加几种：删除线、链接、引用、列表，每种都能单独开关。</p>
 <p>很自然地，就成了这样：</p>
@@ -602,6 +629,7 @@ export function renderWith(text: string, options: RenderOptions): string {
     .reduce((html, rule) =&gt; rule.apply(html), escape(text))
 }
 </code></pre>
+<p><strong>上面这两段是修之前的样子。</strong> 后面那节会讲在它们身上发现了什么——引用规则根本没生效，链接还有一个属性注入的口子。</p>
 <p><img src="../figures/fig-06-if-vs-rules.svg" alt="左边是六个 if，顺序只存在于代码的行序里；右边是六条规则组成的数组，顺序就是数组顺序，每一项旁边标着它第几个执行。加一条语法在左边要在中间找位置插进去，在右边只是加一个数组元素。"></p>
 <p>这一版的核心是 62 行的那个量级（一份规则表加一个渲染函数），输出和它逐字节一致。案例里有对照脚本，你可以自己验一遍：</p>
 <pre><code class="language-bash">cd case &amp;&amp; npm install &amp;&amp; npm run verify:v0.4
@@ -643,7 +671,8 @@ export function renderWith(text: string, options: RenderOptions): string {
 <p>反正能跑就行？这六行确实能跑。问题不在今天，在你三个月后想加第七种语法、又记不清该插在第几行的时候。</p>
 
 <hr>
-<h1>构造函数参数越来越多</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 构造函数参数越来越多</nav>
+<h1 id="ch07">构造函数参数越来越多</h1>
 <h2>十二个参数</h2>
 <p>编辑器需要配置之后，构造函数变成了这样。</p>
 <pre><code class="language-ts">const editor = new Editor(
@@ -734,7 +763,8 @@ example.ts           新旧调用方对照
 <p>一次分好组就不用管了？分组会过期。每加一个新配置，回头看一眼它属于哪一组；如果哪一组开始装不下，那是边界该重划的信号。</p>
 
 <hr>
-<h1>包了一层又一层</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 包了一层又一层</nav>
+<h1 id="ch08">包了一层又一层</h1>
 <h2>保存这件事长了四层</h2>
 <p>保存原本只有一行。后来陆续加了四件事，每一件单看都该加。</p>
 <ul>
@@ -803,7 +833,8 @@ const save = middlewares.reduceRight((next, wrap) =&gt; wrap(next), rawSave)
 <p>拆掉某一层会让代码变不安全？拆日志不会。拆重试会。这正是要逐层问一遍的原因——四层里混着两类东西，一刀切地留或者删都会错。</p>
 
 <hr>
-<h1>状态变了，界面没更新</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 状态变了，界面没更新</nav>
+<h1 id="ch09">状态变了，界面没更新</h1>
 <h2>一个所有人都会遇到的 bug</h2>
 <p>点笔记右上角的时间，可以改这条笔记的归属日期。</p>
 <p>功能做完了，能跑。但很快发现：改完日期，左边列表的分组标题还是「今天」。</p>
@@ -875,7 +906,8 @@ console.log(performance.now() - t)
 <p>这个 bug 修好了就行？修一行让它今天不犯。消除那个派生状态，让它以后不犯。<strong>前者的成本是五分钟，后者是十分钟，但只有后者是复利。</strong></p>
 
 <hr>
-<h1>到处都在 new</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 到处都在 new</nav>
+<h1 id="ch10-new">到处都在 new</h1>
 <h2>三处 new 了同一个东西</h2>
 <p>设置面板、导出、统计，三个新模块。</p>
 <p>每个模块都要读笔记，于是各自的顶部都出现了同一行：</p>
@@ -946,7 +978,8 @@ export function createExporter(service: NoteService) { /* ... */ }
 <p>依赖注入太重了，要装框架？依赖注入是一件事，框架是另一件。<strong>把创建挪到一个地方、把依赖写进参数，这就是依赖注入</strong>，不需要任何库。</p>
 
 <hr>
-<h1>加一个功能，要动几个文件</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 加一个功能，要动几个文件</nav>
+<h1 id="ch11">加一个功能，要动几个文件</h1>
 <h2>我想加搜索</h2>
 <p>我想给速记加搜索。</p>
 <p>为了拿到真实数字，我真的在 v1.1 上做了一遍这个改动，数完又撤掉了——它不在 <code>case/</code> 里。改动是两个文件加一个新增：</p>
@@ -1029,7 +1062,8 @@ src/search.ts      新增
 <p>现在改动少，不用管？现在就列清单。等到改动变贵的时候，你已经不知道是哪次改动让它变贵的了。</p>
 
 <hr>
-<h1>同样的代码出现了三遍</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 同样的代码出现了三遍</nav>
+<h1 id="ch12">同样的代码出现了三遍</h1>
 <h2>三处几乎一样的错误处理</h2>
 <p>主界面、设置面板、导出，三个地方都要读写存储。它们的错误处理长这样：</p>
 <pre><code class="language-ts">// main.ts
@@ -1122,7 +1156,8 @@ readWithToast(&#39;读取笔记&#39;, () =&gt; storage.load())
 <p>用继承来解决重复？继承把「共同的部分」放父类，「不同的部分」放子类。当差异是数据的时候，继承会造出一堆只有一行常量不同的子类；当差异是一个洞的时候，传函数就够了。继承适合的是「差异有好几个、而且要各自演化」的情况，那个情况比你想象的少。</p>
 
 <hr>
-<h1>谁都需要那个对象</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 谁都需要那个对象</nav>
+<h1 id="ch13">谁都需要那个对象</h1>
 <h2>三个参数，传了三层</h2>
 <p>这一章的情况案例里还没有——v1.1 的渲染在一个函数里，没有拆分，也就没有参数透传的问题。</p>
 <p>它讲的是这个应用再长一截之后会发生的事：有了设置面板、导出、统计三个模块，渲染会自然拆开，那时候参数就会往下传。所以在读这一章的时候，把下面的代码当成「照这个趋势长下去的样子」，不是现状。</p>
@@ -1207,7 +1242,8 @@ export const env = {
 <p>所有依赖都显式传递最规范？显式传递是有成本的：每一个中间层都要在签名里带上它不用的东西。环境类的依赖注入一次就够了，把它当数据传是把规范用错了地方。</p>
 
 <hr>
-<h1>什么时候该拆，什么时候不该</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 什么时候该拆，什么时候不该</nav>
+<h1 id="ch14">什么时候该拆，什么时候不该</h1>
 <h2>前面十一章给了工具，这一章给顺序</h2>
 <p>到这里，书里已经攒了不少判断工具：</p>
 <ul>
@@ -1300,7 +1336,8 @@ export const env = {
 <p>下一章讲怎么拆得安全。</p>
 
 <hr>
-<h1>怎么安全地拆</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 怎么安全地拆</nav>
+<h1 id="ch15">怎么安全地拆</h1>
 <h2>拆比判断更容易出事</h2>
 <p>第 14 章给了判断顺序，但判断只是决定「拆哪个」。真正动手的时候，问题换了：你要同时改好几个文件，跑不起来的时候不知道是哪一步坏的。</p>
 <p>这一章给一套做法，目标是每一步坏掉的时候你都知道是哪一步。</p>
@@ -1389,7 +1426,8 @@ render()
 <p>下一章是最后一章。回到第 00 章那两份代码，把整条路走完。</p>
 
 <hr>
-<h1>抽象的收益曲线</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 抽象的收益曲线</nav>
+<h1 id="ch16">抽象的收益曲线</h1>
 <h2>回到那两份代码</h2>
 <p>第 00 章摆了两份代码。</p>
 <p><code>v0.1</code>，一个文件四十四行，能用。</p>
@@ -1520,7 +1558,8 @@ src/main.ts           界面 + 组装
 <p>附录 A 是模式索引，按 GoF 的名字反查章节。附录 B 是一页检查清单，可以打印出来贴在显示器上。</p>
 
 <hr>
-<h1>附录 A　模式索引</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 模式索引</nav>
+<h1 id="ch-A">附录 A　模式索引</h1>
 <p>这本书不按模式分章，但你可能就是想知道「适配器模式在哪一章」。按名字查这里。</p>
 <h2>正文里真的当术语讲过的</h2>
 <table>
@@ -1631,7 +1670,8 @@ src/main.ts           界面 + 组装
 <p>这本书从头到尾只有这一个判据。模式的名字是一条线索，不是结论。</p>
 
 <hr>
-<h1>附录 B　一页检查清单</h1>
+<nav class="chapter-nav"><a href="#toc">↑ 目录</a> · 一页检查清单</nav>
+<h1 id="ch-B">附录 B　一页检查清单</h1>
 <p>这一页是可以单独打印出来的部分。<strong>它不替代正文</strong>，但你在改一份 AI 生成的代码之前扫一眼，能省掉大部分来回。</p>
 <hr>
 <h2>拿到一份代码，先做三件事</h2>
@@ -1692,4 +1732,7 @@ src/main.ts           界面 + 组装
 <p><strong>抽象买的是曲线斜率：付一次建立成本，换以后每次加功能便宜一点。</strong></p>
 <p><strong>判断一份代码好不好，看你要做下一个改动时，它挡不挡路。</strong></p>
 
+<p class="chapter-nav" style="text-align:center;margin-top:72px">
+  <a href="#toc">↑ 回到目录</a>
+</p>
 </main></body></html>
