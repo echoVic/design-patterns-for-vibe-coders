@@ -29,6 +29,12 @@ const files = (await readdir(src)).filter((f) => f.endsWith('.md'))
 /** 给每章一个稳定的锚点，目录要用。 */
 const anchorOf = (f) => 'ch' + f.replace(/\..*$/, '').replace(/[^0-9A-Za-z]+/g, '-').replace(/-+$/, '')
 
+// 插图内容读一遍，内联版要用
+const figureCache = new Map()
+for (const f of await readdir(join(root, 'figures'))) {
+  if (f.endsWith('.svg')) figureCache.set(f, await readFile(join(root, 'figures', f), 'utf8'))
+}
+
 const chapters = []
 const toc = []
 for (const f of files) {
@@ -85,6 +91,8 @@ pre{background:var(--card);border-radius:12px;padding:18px 20px;overflow-x:auto;
   margin:0 0 22px;line-height:1.65}
 pre code{background:none;padding:0;font-size:13px;color:var(--ink)}
 img{display:block;max-width:100%;height:auto;margin:26px auto}
+.fig{margin:26px auto;max-width:100%}
+.fig svg{display:block;width:100%;height:auto}
 table{width:100%;border-collapse:collapse;margin:0 0 24px;font-size:14.5px}
 th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--soft)}
 th{color:var(--faint);font-weight:500;font-size:13px}
@@ -109,7 +117,12 @@ h1:target,h2:target{scroll-margin-top:24px}
 @media print{
   body{background:#fff;line-height:1.65}
   main{max-width:none;padding:0}
-  .toc,.chapter-nav{display:none}
+  .chapter-nav{display:none}
+  /* 目录在打印时保留，单独一页。Chrome 不支持 target-counter()，所以标不了页码 */
+  .toc{page-break-after:always;border:0;padding:0;margin:0;background:none;border-radius:0}
+  .toc-h{font-size:11pt;margin-bottom:14pt}
+  .toc li{font-size:11pt;margin-bottom:7pt}
+  .toc .n{min-width:26pt;font-size:10pt}
   /* 扉页单独一页，图铺满 */
   .cover{max-width:none;margin:0;page-break-after:always;
     display:flex;align-items:center;justify-content:center;min-height:96vh}
@@ -160,5 +173,21 @@ ${chapters.join('\n<hr>\n')}
 
 await mkdir(out, { recursive: true })
 await writeFile(join(out, 'book.html'), html)
+
+// 第二份：把插图内联进去，做成一个可以单独发出去的文件。
+// 缺了它，把 book.html 发给别人就是一堆破图——图走的是 ../figures/ 相对路径。
+const inlined = html.replace(/<img([^>]*?)src="\.\.\/figures\/([\w-]+\.svg)"([^>]*)>/g, (_m, before, file, after) => {
+  const svg = figureCache.get(file)
+  if (!svg) return _m
+  // 去掉 XML 声明和固定的宽高，让 CSS 的 max-width 说了算
+  const body = svg
+    .replace(/<\?xml[^>]*\?>/g, '')
+    .replace(/<title>[\s\S]*?<\/title>/g, '')
+    .replace(/(<svg[^>]*?)\s+width="[^"]*"\s+height="[^"]*"/, '$1')
+  const alt = (before + after).match(/alt="([^"]*)"/)?.[1] ?? ''
+  return `<figure class="fig" role="img" aria-label="${alt}">${body}</figure>`
+})
+await writeFile(join(out, 'book-standalone.html'), inlined)
 const plain = html.replace(/<[^>]+>/g, '').replace(/\s/g, '').length
 console.log(`✓ dist/book.html  ${files.length} 章  ${(html.length / 1024).toFixed(0)} KB  正文约 ${plain} 字`)
+console.log(`✓ dist/book-standalone.html  单文件，插图内联  ${(inlined.length / 1024).toFixed(0)} KB`)
