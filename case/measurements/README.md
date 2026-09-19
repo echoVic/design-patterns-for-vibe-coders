@@ -42,6 +42,23 @@
 
 ### 怎么复核
 
-两个变体都是从 `v1.1` 抄过来的（`store.ts`、`tags.ts`、`render/rules.ts`、`render/index.ts` 那几个没改动，为了省地方没放进来）。想跑起来的话把它们拷回来即可。
+**量数字不用跑代码**，直接扫文本：
 
-量数字用的是文本扫描，脚本不复杂：数每个函数签名里有没有 `env: Env`，再数函数体里 `env.` 出现了几次（使用）和 `env` 单独出现了几次（搬运）。
+```bash
+cd case/measurements/grow-to-three-modules
+node measure.mjs
+```
+
+它数每个函数签名里有没有 `env: Env`，再数函数体里 `env.` 出现了几次（使用）、`env` 单独出现了几次（搬运）。输出和上面那张表对得上。
+
+**想真跑起来**：这两个变体都是从 `v1.1` 抄的，缺的那几个文件没改动过，拷回来就行。
+
+```bash
+cd case/measurements/grow-to-three-modules
+for v in variant-a-pass-env variant-b-inject-once; do
+  cp ../../v1.1/src/store.ts ../../v1.1/src/tags.ts ../../v1.1/src/types.ts $v/
+  cp ../../v1.1/src/render/rules.ts ../../v1.1/src/render/index.ts $v/render/
+done
+```
+
+拷完两个目录都能通过 `tsc --strict`。
